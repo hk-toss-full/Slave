@@ -1,15 +1,12 @@
 package com.example.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class VerifyMailRequest {
+public class AuthDto {
     private String email;
-    private String authNum;
 }
