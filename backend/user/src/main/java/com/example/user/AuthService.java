@@ -17,7 +17,7 @@ public class AuthService {
     private final JavaMailSender javaMailSender;
 
     @Value("${mail.username}")
-    private final String senderEmail;
+    private String senderEmail;
 
     public String createCode() {
         Random random = new Random();
