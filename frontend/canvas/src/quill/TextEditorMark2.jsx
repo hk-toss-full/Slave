@@ -3,15 +3,18 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import * as Y from 'yjs';
 import { QuillBinding } from 'y-quill';
-import axios from 'axios';
 import { modules } from './utils/TextEditorModules.js';
 import { CustomInline } from './utils/CustomInLine.js';
-import debounce from 'lodash.debounce'; // Ensure lodash.debounce is installed
-
+import debounce from 'lodash.debounce';
+import {getData, postData} from "./utils/Data.js";
 const ip = `192.168.10.69`;
-const url = `http://${ip}:8080`;
+const url = `http://${ip}:8080/api/v1/canvas`;
 
 Quill.register(CustomInline);
+
+const workspace_id = 1;
+const conversation_id = 1;
+const canvas_id = 2;
 
 const TextEditor = () => {
     const quillRef = useRef(null); // Quill instance reference
@@ -21,46 +24,25 @@ const TextEditor = () => {
         const quill = quillRef.current.getEditor();
         const textType = doc.getText('quill-content'); // Yjs text type
 
-        // Synchronize Yjs document with Quill editor
         const binding = new QuillBinding(textType, quill);
 
-        // Debounced update handler
         const debouncedUpdateHandler = debounce(async () => {
-            const update = Y.encodeStateAsUpdate(doc);
-            await axios.post(`${url}/update`, update, {
-                headers: { 'Content-Type': 'application/octet-stream' }
-            });
+            await postData(url, workspace_id, conversation_id, canvas_id, doc, Y);
         }, 250);
 
-        // Listen for document updates
-        const updateHandler = () => debouncedUpdateHandler();
+        const updateHandler = () => debouncedUpdateHandler(); // 텍스트 업데이트 감지
         doc.on('update', updateHandler);
 
-        // Fetch latest state from the server
-        const fetchUpdates = async () => {
-            try {
-                const response = await axios.get(`${url}/get-latest-updates`);
+        const handleGetData = async () => {await getData(url, workspace_id, conversation_id, canvas_id, doc, Y);} // 최신 데이터로 갱신
+        handleGetData();
 
-                // Decode Base64 to Uint8Array
-                const update = new Uint8Array(
-                    atob(response.data).split("").map(char => char.charCodeAt(0))
-                );
-
-                Y.applyUpdate(doc, update);
-            } catch (error) {
-                console.error("Failed to fetch updates:", error);
-            }
-        };
-
-        fetchUpdates(); // Run once on initial load
-
-        const interval = setInterval(fetchUpdates, 500); // Check server every 0.5 seconds
+        const interval = setInterval(handleGetData, 1000);
 
         return () => {
             clearInterval(interval);
             doc.off('update', updateHandler);
             binding.destroy();
-            debouncedUpdateHandler.cancel(); // Cancel debounced function on cleanup
+            debouncedUpdateHandler.cancel();
         };
     }, [doc]);
 

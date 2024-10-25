@@ -1,4 +1,3 @@
-import TextEditor from "./quill/TextEditor.jsx";
 import TextEditorMark2 from "./quill/TextEditorMark2.jsx";
 const App = () => {
 
