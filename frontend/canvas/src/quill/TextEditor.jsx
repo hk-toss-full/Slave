@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
 import ReactQuill, {Quill} from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {modules} from './utilss/TextEditorModules.js';
-import {CustomInline} from './utilss/CustomInLine.js';
+import {modules} from './utils/TextEditorModules.js';
+import {CustomInline} from './utils/CustomInLine.js';
 import {debounce} from 'lodash';
-import {getDoing, postDoing} from "./utilss/Doing.js";
-import {getData, postData} from "./utilss/Data.js";
+import {getDoing, postDoing} from "./utils/Doing.js";
+import {getData, postData} from "./utils/Data.js";
 const ip = `192.168.10.69`
 const url = `http://${ip}:8080/api/v1/canvas`;
 
