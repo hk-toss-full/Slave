@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -72,7 +73,7 @@ public class DocumentController {
         final String AWARENESS_KEY = "awareness:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
         LocalDateTime now = LocalDateTime.now();
         System.out.println("cursor " + now);
-        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor); // Store awareness state in Redis
+        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor, Duration.ofMinutes(1)); // Store awareness state in Redis
         return ResponseEntity.ok().build();
     }
 

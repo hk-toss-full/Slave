@@ -10,6 +10,7 @@ import { getData, postData } from "./utils/Data.js";
 import { modules } from "./utils/TextEditorModules.js";
 import { Awareness } from 'y-protocols/awareness';
 import {use} from "marked";
+import {getCursor, postCursor} from "./utils/cursor.js";
 
 const ip = `172.25.36.80`;
 const url = `http://${ip}:8080/api/v1/canvas`;
@@ -28,11 +29,7 @@ const TextEditor = () => {
 
     useEffect(() => {
         const quill = quillRef.current.getEditor();
-
-        // Initialize cursors module
         const cursors = quill.getModule('cursors');
-
-        // QuillBinding for binding Y.Text and Quill
         const textType = doc.getText('quill-content');
         const binding = new QuillBinding(textType, quill, awareness);
 
@@ -54,58 +51,30 @@ const TextEditor = () => {
             range: quill.getSelection(),
         });
 
-        // Handle quill selection changes
+        // 커서 정보 발송
+        const handlePostCursor = async () => {
+            await postCursor()(url, workspace_id, conversation_id, canvas_id ,userID, awareness)
+        }
+
+        // 변경시마다 실행
         quill.on('selection-change', range => {
             if (range) {
                 awareness.setLocalStateField('user', {
                     ...awareness.getLocalState().user,
                     range,
                 });
-                sendCursorDataToServer();
+                handlePostCursor();
             }
         });
 
-        // Function to send cursor data to the server using axios
-        const sendCursorDataToServer = debounce(async () => {
-            try {
-                const localState = awareness.getLocalState().user;
-                await axios.post(`${url}/cursor`, {
-                    cursor: localState
-                }, {headers: {
-                        'workspace_id': `${workspace_id}`,
-                        'conversation_id': `${conversation_id}`,
-                        'canvas_id': `${canvas_id}`,
-                        'user_id': `${userID}`}});
-            } catch (error) {
-                console.error('Failed to send cursor data:', error);
-            }
-        }, 250);
+        // 커서 정보 요청
+        const handleGetCursor = async () => {
+            await getCursor(url, workspace_id, conversation_id, canvas_id, userID, cursors)
+        }
+        // 커서 요청 반복
+        const cursorDataInterval = setInterval(handleGetCursor, 1000);
 
-        // Function to get cursor data from the server
-        const getCursorDataFromServer = async () => {
-            try {
-                const response = await axios.get(`${url}/cursor/${workspace_id}/${conversation_id}/${canvas_id}`);
-                const remoteCursors = response.data;
-                let cursorJson = [];
-                response.data.forEach(str => {
-                    cursorJson.push(JSON.parse(str))
-                })
-                console.log(cursorJson[0])
-                cursorJson.forEach(cursor => {
-                    if (cursor.cursor.name !== userID) {
-                        cursors.createCursor(cursor.cursor.name, cursor.cursor.name, cursor.cursor.color);
-                        cursors.moveCursor(cursor.cursor.name, cursor.cursor.range);
-                    }
-                });
-            } catch (error) {
-                console.error('Failed to get cursor data:', error);
-            }
-        };
-
-        // Set interval to periodically get cursor data from the server
-        const cursorDataInterval = setInterval(getCursorDataFromServer, 1000);
-
-        // Handle document updates and post data to the server
+        // 텍스트 발송
         const debouncedUpdateHandler = debounce(async () => {
             await postData(url, workspace_id, conversation_id, canvas_id, doc, Y);
         }, 250);
@@ -113,9 +82,11 @@ const TextEditor = () => {
         const updateHandler = () => debouncedUpdateHandler();
         doc.on('update', updateHandler);
 
+        // 텍스트 요청
         const handleGetData = async () => {
             await getData(url, workspace_id, conversation_id, canvas_id, doc, Y);
         };
+        // 최초 로딩
         handleGetData();
 
         const dataInterval = setInterval(handleGetData, 1000);
@@ -126,7 +97,7 @@ const TextEditor = () => {
             doc.off('update', updateHandler);
             binding.destroy();
             debouncedUpdateHandler.cancel();
-            sendCursorDataToServer.cancel();
+            postCursor.cancel();
         };
     }, [doc, awareness]);
 
