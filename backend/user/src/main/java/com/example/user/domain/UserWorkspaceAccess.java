@@ -8,7 +8,7 @@ import lombok.Data;
 public class UserWorkspaceAccess {
 
     @EmbeddedId
-    private UserWorkspaceAccessId id = new UserWorkspaceAccessId();
+    private UserWorkspaceAccessId id;
 
     @ManyToOne
     @MapsId("userId")

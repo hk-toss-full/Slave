@@ -5,6 +5,7 @@ import com.example.user.dto.ConversationDto;
 import com.example.user.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.user.domain.User;
 
 @RestController
 @RequestMapping("/conversations")
@@ -15,7 +16,6 @@ public class ConversationController {
 
     @PostMapping("/create")
     public Conversation createConversation(@RequestBody ConversationDto conversationDto, @RequestParam User creator) {
-        // DTO를 이용해 setter 없이 Conversation 생성
         return conversationService.createConversation(conversationDto, creator);
     }
 
