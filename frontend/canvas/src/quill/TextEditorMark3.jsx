@@ -90,11 +90,11 @@ const TextEditor = () => {
                 response.data.forEach(str => {
                     cursorJson.push(JSON.parse(str))
                 })
-
+                console.log(cursorJson[0])
                 cursorJson.forEach(cursor => {
-                    if (cursor.user_id !== userID) {
-                        cursors.createCursor(cursor.user_id, cursor.cursor.name, cursor.cursor.color);
-                        cursors.moveCursor(cursor.user_id, cursor.cursor.range);
+                    if (cursor.cursor.name !== userID) {
+                        cursors.createCursor(cursor.cursor.name, cursor.cursor.name, cursor.cursor.color);
+                        cursors.moveCursor(cursor.cursor.name, cursor.cursor.range);
                     }
                 });
             } catch (error) {

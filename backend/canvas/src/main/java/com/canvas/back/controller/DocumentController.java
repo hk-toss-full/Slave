@@ -1,16 +1,13 @@
 package com.canvas.back.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -95,7 +92,7 @@ public class DocumentController {
             return ResponseEntity.noContent().build();
         }
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("awareness get " + now);
+        System.out.println("cursor " + now);
         return ResponseEntity.ok().body(values);
     }
 }
