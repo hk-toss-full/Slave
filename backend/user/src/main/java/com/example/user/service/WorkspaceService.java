@@ -11,6 +11,7 @@ import com.example.user.repository.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,10 @@ public class WorkspaceService {
     @Autowired
     private UserWorkspaceAccessRepository userWorkspaceAccessRepository;
 
-    // 이메일 유효성 검사 패턴 (단순한 예시)
+    public List<Workspace> getAllWorkspaces() {
+        return workspaceRepository.findAll();
+    }
+
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 

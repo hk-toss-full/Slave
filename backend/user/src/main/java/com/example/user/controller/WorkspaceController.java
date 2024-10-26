@@ -1,16 +1,24 @@
 package com.example.user.controller;
 
+import com.example.user.domain.Workspace;
 import com.example.user.dto.WorkspaceDto;
 import com.example.user.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/workspaces")
 public class WorkspaceController {
     private final WorkspaceService workspaceService;
+
+    @GetMapping("/all")
+    public List<Workspace> getAllWorkspaces() {
+        return workspaceService.getAllWorkspaces();
+    }
 
     @PostMapping("/create")
     public ResponseEntity<String> createWorkspace(@RequestBody WorkspaceDto workspaceDto) {
