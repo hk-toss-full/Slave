@@ -21,4 +21,13 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         return template;
     }
+
+    @Bean(name = "myStringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate(LettuceConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        return template;
+    }
 }

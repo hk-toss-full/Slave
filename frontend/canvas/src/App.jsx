@@ -1,4 +1,5 @@
 import TextEditorMark2 from "./quill/TextEditorMark2.jsx";
+import TextEditorMark3 from "./quill/TextEditorMark3.jsx";
 const App = () => {
 
     return (
@@ -31,7 +32,7 @@ const App = () => {
                         </div>
                         <div className="flex min-h-0 w-full h-full" style={{maxHeight: `calc(100vh - 130px)`}}>
                             <div className={"w-full flex h-full"}>
-                                <TextEditorMark2/>
+                                <TextEditorMark3/>
                             </div>
                         </div>
                     </div>

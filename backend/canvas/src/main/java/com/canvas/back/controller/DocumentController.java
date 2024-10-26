@@ -1,13 +1,18 @@
 package com.canvas.back.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.redis.core.RedisTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/canvas")
@@ -16,7 +21,9 @@ import java.util.Arrays;
 public class DocumentController {
     private final RedisTemplate<String, byte[]> redisTemplate;
 
-    private static final String DOCUMENT_KEY = "1:1:1";
+    @Autowired
+    @Qualifier("myStringRedisTemplate")
+    private RedisTemplate<String, String> myStringRedisTemplate;
 
     @PostMapping
     public ResponseEntity<Void> receiveUpdate(
@@ -25,7 +32,7 @@ public class DocumentController {
             @RequestHeader String canvas_id,
             @RequestBody byte[] update
     ) {
-        if (update == null) {
+        if (update == null || update.length == 0) {
             return ResponseEntity.badRequest().build();
         }
         final String KEY = workspace_id + ":" + conversation_id + ":" + canvas_id;
@@ -52,5 +59,43 @@ public class DocumentController {
                 .ok()
                 .header("Content-Type", "application/octet-stream")
                 .body(currentState);
+    }
+
+    @PostMapping("/cursor")
+    public ResponseEntity<Void> receiveAwarenessUpdate(
+            @RequestHeader String workspace_id,
+            @RequestHeader String conversation_id,
+            @RequestHeader String canvas_id,
+            @RequestHeader String user_id,
+            @RequestBody String cursor
+    ) {
+        if (cursor == null || cursor.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        final String AWARENESS_KEY = "awareness:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("cursor " + now);
+        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor); // Store awareness state in Redis
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/cursor/{workspace_id}/{conversation_id}/{canvas_id}")
+    public ResponseEntity<List<String>> getAwarenessState(
+            @PathVariable String workspace_id,
+            @PathVariable String conversation_id,
+            @PathVariable String canvas_id
+    ) {
+        final String AWARENESS_KEY_PATTERN = "awareness:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
+        Set<String> keys = myStringRedisTemplate.keys(AWARENESS_KEY_PATTERN);
+        if (keys == null || keys.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        List<String> values = myStringRedisTemplate.opsForValue().multiGet(keys);
+        if (values == null || values.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("awareness get " + now);
+        return ResponseEntity.ok().body(values);
     }
 }
