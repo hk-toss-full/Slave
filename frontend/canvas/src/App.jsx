@@ -38,6 +38,7 @@ const App = () => {
                     </div>
                 </div>
             </div>
+            <Message workspaceId={2} channelId={1}/>
         </div>
     )
 }
