@@ -9,8 +9,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
@@ -81,10 +83,15 @@ public class DocumentController {
             @RequestHeader String user_id,
             @RequestBody String cursor
     ) {
+        String encodedText = user_id.substring(user_id.indexOf("B?") + 2, user_id.lastIndexOf("?="));
+
+        // Base64 디코딩
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedText);
+        String user_idde = new String(decodedBytes, StandardCharsets.UTF_8);
         if (cursor == null || cursor.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
+        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_idde;
         System.out.println("post cursor " + key);
         myStringRedisTemplate.opsForValue().set(key, cursor, Duration.ofMinutes(1));
         return ResponseEntity.ok().build();

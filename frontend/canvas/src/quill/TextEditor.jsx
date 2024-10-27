@@ -43,8 +43,14 @@ const TextEditor = () => {
             });
         });
 
-        // Example of setting awareness for the current user (assuming a unique user ID and color)
-        const userID = `user-${Math.floor(Math.random() * 1000)}`; // Replace with real user info if available
+        // Load user ID from localStorage or create a new one
+        let userID = localStorage.getItem('userID');
+        if (!userID) {
+            userID = `user-${Math.floor(Math.random() * 1000)}`;
+            localStorage.setItem('userID', userID);
+        }
+
+        // Set awareness for the current user
         awareness.setLocalStateField('user', {
             name: userID,
             color: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color
@@ -56,7 +62,7 @@ const TextEditor = () => {
             await postCursor(url, workspace_id, conversation_id, canvas_id ,userID, awareness)
         }
 
-        // 변경시마다 실행
+        // 변경시만붤
         quill.on('selection-change', range => {
             if (range) {
                 awareness.setLocalStateField('user', {

@@ -22,13 +22,14 @@ export const getCursor = async (url, workspace_id, conversation_id, canvas_id, u
 
 export const postCursor = debounce(async (url, workspace_id, conversation_id, canvas_id, userID, awareness) => {
     try {
+        const encodedText = btoa(unescape(encodeURIComponent(userID)));
         const localState = awareness.getLocalState().user;
         await axios.post(`${url}/cursor`, {cursor: localState},
             { headers: {
                 'workspace_id': `${workspace_id}`,
                 'conversation_id': `${conversation_id}`,
                 'canvas_id': `${canvas_id}`,
-                'user_id': `${userID}`}});
+                'user_id': `=?UTF-8?B?${encodedText}?=`}});
     } catch (error) {
         console.error('Failed to post cursor:', error);
     }
