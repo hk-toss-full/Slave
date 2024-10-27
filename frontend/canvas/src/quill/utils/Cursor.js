@@ -24,7 +24,7 @@ export const postCursor = debounce(async (url, workspace_id, conversation_id, ca
     try {
         const encodedText = btoa(unescape(encodeURIComponent(userID)));
         const localState = awareness.getLocalState().user;
-        await axios.post(`${url}/cursor`, {cursor: localState},
+        await axios.post(`${url}/sse`, {cursor: localState},
             { headers: {
                 'workspace_id': `${workspace_id}`,
                 'conversation_id': `${conversation_id}`,

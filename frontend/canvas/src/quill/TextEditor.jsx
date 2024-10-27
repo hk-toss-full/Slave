@@ -33,6 +33,29 @@ const TextEditor = () => {
         const textType = doc.getText('quill-content');
         const binding = new QuillBinding(textType, quill, awareness);
 
+        const createEventSource = () => {
+            const eventSource = new EventSource(`${url}/sse/${workspace_id}/${conversation_id}/${canvas_id}`);
+
+            eventSource.onmessage = (event) => {
+                cursors.clearCursors();
+                JSON.parse(event.data).forEach(cursor => {
+                    if (cursor.cursor.name !== userID) {
+                        cursors.createCursor(cursor.cursor.name, cursor.cursor.name, cursor.cursor.color);
+                        cursors.moveCursor(cursor.cursor.name, cursor.cursor.range);
+                    }
+                })
+            };
+
+            eventSource.onerror = () => {
+                console.error('Error with SSE, attempting to reconnect...');
+                eventSource.close();
+                setTimeout(() => {
+                    createEventSource(); // 일정 시간 후 재연결 시도
+                }, 3000); // 3초 후 재연결
+            };
+        };
+
+        createEventSource();
         // Awareness update for handling user presence and cursors
         awareness.on('change', () => {
             awareness.getStates().forEach((state, clientID) => {
@@ -78,7 +101,7 @@ const TextEditor = () => {
             await getCursor(url, workspace_id, conversation_id, canvas_id, userID, cursors)
         }
         // 커서 요청 반복
-        const cursorDataInterval = setInterval(handleGetCursor, 1000);
+        //const cursorDataInterval = setInterval(handleGetCursor, 1000);
 
         // 텍스트 발송
         const debouncedUpdateHandler = debounce(async () => {
@@ -99,11 +122,12 @@ const TextEditor = () => {
 
         return () => {
             clearInterval(dataInterval);
-            clearInterval(cursorDataInterval);
+            //clearInterval(cursorDataInterval);
             doc.off('update', updateHandler);
             binding.destroy();
             debouncedUpdateHandler.cancel();
             postCursor.cancel();
+            eventSource.close();
         };
     }, [doc, awareness]);
 
