@@ -1,5 +1,7 @@
-package com.canvas.back.controller;
+package com.canvas.back.canvas.controller;
 
+import com.canvas.back.canvas.DTO.CanvasHeader;
+import com.canvas.back.canvas.service.CanvasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,19 +14,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1/canvas")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class DocumentController {
+
     private final RedisTemplate<String, byte[]> redisTemplate;
+    private final CanvasService canvasService;
 
     @Autowired
     @Qualifier("myStringRedisTemplate")
     private RedisTemplate<String, String> myStringRedisTemplate;
 
     @PostMapping
-    public ResponseEntity<Void> receiveUpdate(
+    public ResponseEntity<Void> postCanvas(
             @RequestHeader String workspace_id,
             @RequestHeader String conversation_id,
             @RequestHeader String canvas_id,
@@ -33,30 +37,40 @@ public class DocumentController {
         if (update == null || update.length == 0) {
             return ResponseEntity.badRequest().build();
         }
-        final String KEY = "canvas:" + workspace_id + ":" + conversation_id + ":" + canvas_id;
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("post " + now);
-        redisTemplate.opsForValue().set(KEY, update);
+        String key = canvasService.keyCanvas(workspace_id, conversation_id, canvas_id);
+        canvasService.saveCanvas(key, update);
+        System.out.println("post " + key);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{workspace_id}/{conversation_id}/{canvas_id}")
-    public ResponseEntity<byte[]> getLatestUpdates(
+    public ResponseEntity<byte[]> searchOneCanvas(
             @PathVariable String workspace_id,
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        final String KEY = "canvas:" + workspace_id + ":" + conversation_id + ":" + canvas_id;
-        byte[] currentState = redisTemplate.opsForValue().get(KEY);
-        if (currentState == null || currentState.length == 0) {
+        String key = canvasService.keyCanvas(workspace_id, conversation_id, canvas_id);
+        byte[] canvas = canvasService.findOneCanvas(key);
+        if (canvas == null ||canvas.length == 0) {
             return ResponseEntity.noContent().build();
         }
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("get " + now);
+        System.out.println("get " + key);
         return ResponseEntity
                 .ok()
                 .header("Content-Type", "application/octet-stream")
-                .body(currentState);
+                .body(canvas);
+    }
+
+    @DeleteMapping("/{workspace_id}/{conversation_id}/{canvas_id}")
+    public ResponseEntity<Void> deleteCanvas(
+            @PathVariable String workspace_id,
+            @PathVariable String conversation_id,
+            @PathVariable String canvas_id
+    ) {
+        String key = canvasService.keyCanvas(workspace_id, conversation_id, canvas_id);
+        canvasService.deleteCanvas(key);
+        System.out.println("Delete " + key);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/cursor")
@@ -70,10 +84,9 @@ public class DocumentController {
         if (cursor == null || cursor.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        final String AWARENESS_KEY = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("post cursor " + now);
-        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor, Duration.ofMinutes(1));
+        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
+        System.out.println("post cursor " + key);
+        myStringRedisTemplate.opsForValue().set(key, cursor, Duration.ofMinutes(1));
         return ResponseEntity.ok().build();
     }
 
@@ -83,8 +96,8 @@ public class DocumentController {
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        final String AWARENESS_KEY_PATTERN = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
-        Set<String> keys = myStringRedisTemplate.keys(AWARENESS_KEY_PATTERN);
+        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
+        Set<String> keys = myStringRedisTemplate.keys(key);
         if (keys == null || keys.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -92,8 +105,7 @@ public class DocumentController {
         if (values == null || values.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("get cursor " + now);
+        System.out.println("get cursor " + key);
         return ResponseEntity.ok().body(values);
     }
 }

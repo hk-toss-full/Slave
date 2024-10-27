@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import './utils/TextEditor.css';
 import * as Y from 'yjs';
 import { QuillBinding } from 'y-quill';
 import QuillCursors from 'quill-cursors';
@@ -14,7 +14,6 @@ import {EventKey} from "./utils/EventKey.js";
 
 const ip = `172.25.36.80`;
 const url = `http://${ip}:8080/api/v1/canvas`;
-const awarenessUrl = `${url}/awareness`;
 
 Quill.register('modules/cursors', QuillCursors);
 Quill.register(CustomStyle, true);
