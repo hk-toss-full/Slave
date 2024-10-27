@@ -5,19 +5,20 @@ import * as Y from 'yjs';
 import { QuillBinding } from 'y-quill';
 import QuillCursors from 'quill-cursors';
 import debounce from 'lodash.debounce';
-import axios from 'axios';
 import { getData, postData } from "./utils/Data.js";
 import { modules } from "./utils/TextEditorModules.js";
 import { Awareness } from 'y-protocols/awareness';
-import {use} from "marked";
-import {getCursor, postCursor} from "./utils/cursor.js";
+import {getCursor, postCursor} from "./utils/Cursor.js";
+import {CustomStyle, Separator} from "./utils/CustomStyle.js";
+import {EventKey} from "./utils/EventKey.js";
 
 const ip = `172.25.36.80`;
 const url = `http://${ip}:8080/api/v1/canvas`;
 const awarenessUrl = `${url}/awareness`;
 
 Quill.register('modules/cursors', QuillCursors);
-
+Quill.register(CustomStyle, true);
+Quill.register(Separator);
 const workspace_id = 1;
 const conversation_id = 1;
 const canvas_id = 3;
@@ -53,7 +54,7 @@ const TextEditor = () => {
 
         // 커서 정보 발송
         const handlePostCursor = async () => {
-            await postCursor()(url, workspace_id, conversation_id, canvas_id ,userID, awareness)
+            await postCursor(url, workspace_id, conversation_id, canvas_id ,userID, awareness)
         }
 
         // 변경시마다 실행
@@ -100,6 +101,12 @@ const TextEditor = () => {
             postCursor.cancel();
         };
     }, [doc, awareness]);
+
+    const handleEventKey = (event) => {
+        EventKey(event, quillRef)
+    }
+
+    document.addEventListener('keydown', handleEventKey);
 
     return (
         <div className={"w-full h-full overflow-hidden relative"}>

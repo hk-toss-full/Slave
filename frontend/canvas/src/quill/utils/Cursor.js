@@ -5,9 +5,10 @@ export const getCursor = async (url, workspace_id, conversation_id, canvas_id, u
     try {
         const response = await axios.get(`${url}/cursor/${workspace_id}/${conversation_id}/${canvas_id}`);
         const remoteCursors = response.data;
+        if(remoteCursors === ""){return;}
         let cursorJson = [];
-        if(remoteCursors === null){return;}
         remoteCursors.forEach(str => {cursorJson.push(JSON.parse(str))})
+        cursors.clearCursors();
         cursorJson.forEach(cursor => {
             if (cursor.cursor.name !== userID) {
                 cursors.createCursor(cursor.cursor.name, cursor.cursor.name, cursor.cursor.color);

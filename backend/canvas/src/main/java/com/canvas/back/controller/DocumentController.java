@@ -33,10 +33,10 @@ public class DocumentController {
         if (update == null || update.length == 0) {
             return ResponseEntity.badRequest().build();
         }
-        final String KEY = workspace_id + ":" + conversation_id + ":" + canvas_id;
+        final String KEY = "canvas:" + workspace_id + ":" + conversation_id + ":" + canvas_id;
         LocalDateTime now = LocalDateTime.now();
         System.out.println("post " + now);
-        redisTemplate.opsForValue().set(KEY, update); // Update the latest state in Redis
+        redisTemplate.opsForValue().set(KEY, update);
         return ResponseEntity.ok().build();
     }
 
@@ -46,7 +46,7 @@ public class DocumentController {
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        final String KEY = workspace_id + ":" + conversation_id + ":" + canvas_id;
+        final String KEY = "canvas:" + workspace_id + ":" + conversation_id + ":" + canvas_id;
         byte[] currentState = redisTemplate.opsForValue().get(KEY);
         if (currentState == null || currentState.length == 0) {
             return ResponseEntity.noContent().build();
@@ -70,10 +70,10 @@ public class DocumentController {
         if (cursor == null || cursor.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        final String AWARENESS_KEY = "awareness:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
+        final String AWARENESS_KEY = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_id;
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("cursor " + now);
-        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor, Duration.ofMinutes(1)); // Store awareness state in Redis
+        System.out.println("post cursor " + now);
+        myStringRedisTemplate.opsForValue().set(AWARENESS_KEY, cursor, Duration.ofMinutes(1));
         return ResponseEntity.ok().build();
     }
 
@@ -83,7 +83,7 @@ public class DocumentController {
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        final String AWARENESS_KEY_PATTERN = "awareness:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
+        final String AWARENESS_KEY_PATTERN = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
         Set<String> keys = myStringRedisTemplate.keys(AWARENESS_KEY_PATTERN);
         if (keys == null || keys.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -93,7 +93,7 @@ public class DocumentController {
             return ResponseEntity.noContent().build();
         }
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("cursor " + now);
+        System.out.println("get cursor " + now);
         return ResponseEntity.ok().body(values);
     }
 }
