@@ -9,6 +9,8 @@ spring:
     h2:
       console:
         enabled: true
+jwt:
+  secret: ogerpon
 
 mail:
   host: smtp.gmail.com

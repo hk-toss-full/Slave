@@ -1,9 +1,9 @@
 // src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import AuthPage from './pages/AuthPage';
-import WorkspaceListPage from './pages/WorkspaceListPage';
-import ConversationList from './components/ConversationList'; // 대화방 리스트 컴포넌트
+import AuthPage from './pages/AuthPage.jsx';
+import WorkspaceListPage from './pages/WorkspaceListPage.jsx';
+import ConversationList from './components/ConversationList.jsx';
 import TextEditor from './quill/TextEditor';
 
 const AppLayout = ({ selectedWorkspaceId }) => {
