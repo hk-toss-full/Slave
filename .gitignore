@@ -1,2 +1,7 @@
 
 /.idea
+/backend/.idea
+/backend/eureka/.gradle
+/backend/eureka/build
+/backend/gateway/build
+/backend/gateway/.gradle
