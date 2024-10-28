@@ -2,6 +2,7 @@ import {useState} from "react";
 import {ConversationTop} from "./ConversationTop.jsx";
 import {ShopIcon} from "./img/ShopIcon.jsx";
 import {HiddenIcon} from "./img/HiddenIcon.jsx";
+import ConversationList from "../../../../../components/ConversationList.jsx";
 
 export const ConversationBar = () => {
     const [isChannelDropdownOpen, setIsChannelDropdownOpen] = useState(false);
@@ -40,6 +41,7 @@ export const ConversationBar = () => {
         <>
             <div className={"w-[260px] bg-[#5D2D5F] h-full"}>
                 <ConversationTop/>
+                <ConversationList workspaceId={1} />
                 <div>
                     <div className={"w-full h-3"}></div>
                 </div>
