@@ -1,6 +1,7 @@
 import TextEditorMark3 from "./textEditor/TextEditor.jsx";
 import {Plus} from "./conversation/component/img/plus.jsx";
 import {useState} from "react";
+import Chat from "../../../chat/Chat.jsx";
 
 export const ConversationMenubar = () => {
     const [isRotated, setIsRotated] = useState(false);
@@ -40,7 +41,7 @@ export const ConversationMenubar = () => {
             </div>
             <div className="flex min-h-0 w-full h-full" style={{maxHeight: `calc(100vh - 130px)`}}>
                 <div className={"w-full flex h-full"}>
-                    <TextEditorMark3/>
+                    <Chat workspaceId ={1} channelId={1} />
                 </div>
             </div>
         </>
