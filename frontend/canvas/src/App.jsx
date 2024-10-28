@@ -1,5 +1,6 @@
 import TextEditor from "./quill/TextEditor.jsx";
 import TextEditorMark2 from "./quill/TextEditorMark2.jsx";
+import Chat from "./chat/Chat.jsx";
 const App = () => {
 
     return (
@@ -32,13 +33,13 @@ const App = () => {
                         </div>
                         <div className="flex min-h-0 w-full h-full" style={{maxHeight: `calc(100vh - 130px)`}}>
                             <div className={"w-full flex h-full"}>
-                                <TextEditorMark2/>
+                                <Chat workspaceId={2} channelId={1}/>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <Message workspaceId={2} channelId={1}/>
+
         </div>
     )
 }
