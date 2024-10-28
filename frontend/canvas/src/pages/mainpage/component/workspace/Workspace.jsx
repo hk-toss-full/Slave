@@ -6,6 +6,7 @@ export const Workspace = () => {
         <>
             <div
                 className="w-[70px] pt-2 h-full bg-[#3B083C]"
+                style={{maxHeight: `calc(100% - 40px)`}}
             >
             <WorkspaceBar/>
             </div>
