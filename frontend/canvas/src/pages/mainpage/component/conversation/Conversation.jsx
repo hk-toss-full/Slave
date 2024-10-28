@@ -1,5 +1,5 @@
-import {ConversationTitleBar} from "../ConversationTitleBar.jsx";
-import {ConversationMenubar} from "../ConversationMenubar.jsx";
+import {ConversationTitleBar} from "./component/ConversationTitleBar.jsx";
+import {ConversationMenubar} from "./component/ConversationMenubar.jsx";
 import {ConversationBar} from "./component/ConversationBar.jsx";
 
 export const Conversation = () => {
