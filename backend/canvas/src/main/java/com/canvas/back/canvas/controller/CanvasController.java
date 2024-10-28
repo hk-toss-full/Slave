@@ -15,17 +15,19 @@ public class CanvasController {
     private final CanvasService canvasService;
 
     @PostMapping("/sse")
-    public void postSeeCanvas(
+    public ResponseEntity<Void> postSeeCanvas(
             @RequestHeader String workspace_id,
             @RequestHeader String conversation_id,
             @RequestHeader String canvas_id,
-            @RequestBody byte[] update
+            @RequestBody byte[] data
     ) {
+        if (data == null || data.length == 0) {return ResponseEntity.badRequest().build();}
         System.out.println("post sse canvas");
-        canvasService.sendUpdateToEmitters(workspace_id, conversation_id, canvas_id, update);
+        canvasService.sendUpdateToEmitters(workspace_id, conversation_id, canvas_id, data);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
+    @GetMapping("/sse/workspaces/{workspace_id}/conversations/{conversation_id}/canvas/{canvas_id}")
     public SseEmitter sseCanvas(
             @PathVariable String workspace_id,
             @PathVariable String conversation_id,
@@ -39,16 +41,16 @@ public class CanvasController {
             @RequestHeader String workspace_id,
             @RequestHeader String conversation_id,
             @RequestHeader String canvas_id,
-            @RequestBody byte[] update
+            @RequestBody byte[] data
     ) {
-        if (update == null || update.length == 0) {
+        if (data == null || data.length == 0) {
             return ResponseEntity.badRequest().build();
         }
-        canvasService.updateCanvas(workspace_id, conversation_id, canvas_id, update);
+        canvasService.createCanvas(workspace_id, conversation_id, canvas_id, data);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{workspace_id}/{conversation_id}/{canvas_id}")
+    @GetMapping("/workspaces/{workspace_id}/conversations/{conversation_id}/canvas/{canvas_id}")
     public ResponseEntity<byte[]> searchOneCanvas(
             @PathVariable String workspace_id,
             @PathVariable String conversation_id,
@@ -66,7 +68,7 @@ public class CanvasController {
                 .body(canvas);
     }
 
-    @DeleteMapping("/{workspace_id}/{conversation_id}/{canvas_id}")
+    @DeleteMapping("/workspaces/{workspace_id}/conversations/{conversation_id}/canvas/{canvas_id}")
     public ResponseEntity<Void> deleteCanvas(
             @PathVariable String workspace_id,
             @PathVariable String conversation_id,

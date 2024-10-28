@@ -66,7 +66,7 @@ public class CursorServiceImpl implements CursorService {
     }
 
     @Override
-    public boolean saveCursor(String workspaceId, String conversationId, String canvasId, String userId, String cursor) {
+    public boolean createCursor(String workspaceId, String conversationId, String canvasId, String userId, String cursor) {
         try {
             String decodedUserId = decodeUserId(userId);
             String key = "cursor:" + workspaceId + ":" + conversationId + ":" + canvasId + ":" + decodedUserId;
@@ -79,7 +79,7 @@ public class CursorServiceImpl implements CursorService {
     }
 
     @Override
-    public List<String> getCursorValues(String workspaceId, String conversationId, String canvasId) {
+    public List<String> findCursor(String workspaceId, String conversationId, String canvasId) {
         Set<String> keys = myStringRedisTemplate.keys("cursor:" + workspaceId + ":" + conversationId + ":" + canvasId + ":*");
 
         if (keys == null || keys.isEmpty()) {return Collections.emptyList();}

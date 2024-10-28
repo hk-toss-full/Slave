@@ -3,7 +3,7 @@ import debounce from "lodash.debounce";
 
 export const getCursor = async (url, workspace_id, conversation_id, canvas_id, userID, cursors) => {
     try {
-        const response = await axios.get(`${url}/cursor/${workspace_id}/${conversation_id}/${canvas_id}`);
+        const response = await axios.get(`${url}/cursor/workspaces/${workspace_id}/conversations/${conversation_id}/canvas/${canvas_id}`);
         const remoteCursors = response.data;
         if(remoteCursors === ""){return;}
         let cursorJson = [];
@@ -36,7 +36,7 @@ export const postCursor = debounce(async (url, workspace_id, conversation_id, ca
 }, 250);
 
 export const sseCursor = (url, workspace_id, conversation_id, canvas_id, cursors, userID) => {
-    const eventSource = new EventSource(`${url}/cursor/sse/${workspace_id}/${conversation_id}/${canvas_id}`);
+    const eventSource = new EventSource(`${url}/cursor/sse/workspaces/${workspace_id}/conversations/${conversation_id}/canvas/${canvas_id}`);
 
     eventSource.onmessage = (event) => {
         cursors.clearCursors();

@@ -56,7 +56,7 @@ public class CanvasServiceImpl implements CanvasService {
     }
 
     @Override
-    public void updateCanvas(String workspace_id, String conversation_id, String canvas_id, byte[] update) {
+    public void createCanvas(String workspace_id, String conversation_id, String canvas_id, byte[] update) {
         String key = keyCanvas(workspace_id, conversation_id, canvas_id);
         saveCanvas(key, update);
         System.out.println("post " + key);

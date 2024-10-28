@@ -13,7 +13,7 @@ import {CustomStyle, Separator} from "./utils/CustomStyle.js";
 import {EventKey} from "./utils/EventKey.js";
 
 const ip = `192.168.10.69`;
-const url = `http://${ip}:8080/api/v1/canvas`;
+const url = `http://${ip}:8080/api/v1`;
 
 Quill.register('modules/cursors', QuillCursors);
 Quill.register(CustomStyle, true);

@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getCanvas = async (url, workspace_id, conversation_id, canvas_id, doc, Y) => {
     try {
-        const response = await axios.get(`${url}/${workspace_id}/${conversation_id}/${canvas_id}`,
+        const response = await axios.get(`${url}/canvas/workspaces/${workspace_id}/conversations/${conversation_id}/canvas/${canvas_id}`,
             { responseType: 'arraybuffer' });
         const update = new Uint8Array(response.data);
         Y.applyUpdateV2(doc, update);
@@ -13,7 +13,7 @@ export const getCanvas = async (url, workspace_id, conversation_id, canvas_id, d
 
 export const postCanvas = async (url, workspace_id, conversation_id, canvas_id, doc, Y) => {
     const update = Y.encodeStateAsUpdateV2(doc);
-    await axios.post(`${url}/sse`, update, {
+    await axios.post(`${url}/canvas/sse`, update, {
         headers: {'workspace_id': `${workspace_id}`,
             'conversation_id': `${conversation_id}`,
             'canvas_id': `${canvas_id}`,
@@ -23,7 +23,7 @@ export const postCanvas = async (url, workspace_id, conversation_id, canvas_id, 
 };
 
 export const sseCanvas = (url, workspace_id, conversation_id, canvas_id, doc, Y) => {
-    const eventSource = new EventSource(`${url}/sse/${workspace_id}/${conversation_id}/${canvas_id}`);
+    const eventSource = new EventSource(`${url}/canvas/sse/workspaces/${workspace_id}/conversations/${conversation_id}/canvas/${canvas_id}`);
 
     eventSource.onmessage = (event) => {
         const binaryString = atob(event.data);  // Base64 디코딩
@@ -45,8 +45,3 @@ export const sseCanvas = (url, workspace_id, conversation_id, canvas_id, doc, Y)
         }, 3000);
     };
 };
-
-function stringToByteArray(str) {
-    const encoder = new TextEncoder();
-    return encoder.encode(str);
-}

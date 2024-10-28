@@ -7,6 +7,6 @@ import java.util.List;
 public interface CursorService {
     SseEmitter createEmitter(String workspaceId, String conversationId, String canvasId);
     void sendCursorUpdate(String workspaceId, String conversationId, String canvasId, String userId, String cursor);
-    boolean saveCursor(String workspaceId, String conversationId, String canvasId, String userId, String cursor);
-    List<String> getCursorValues(String workspaceId, String conversationId, String canvasId);
+    boolean createCursor(String workspaceId, String conversationId, String canvasId, String userId, String cursor);
+    List<String> findCursor(String workspaceId, String conversationId, String canvasId);
 }
