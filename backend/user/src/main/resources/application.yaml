@@ -12,6 +12,10 @@ spring:
 jwt:
   secret: ogerpon
 
+image:
+  upload:
+    directory: uploads/images
+
 mail:
   host: smtp.gmail.com
   port: 587

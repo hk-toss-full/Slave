@@ -1,10 +1,11 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import SignUpPage from './pages/SignUpPage.jsx';
 import WorkspaceListPage from './pages/WorkspaceListPage.jsx';
-import ConversationList from './components/ConversationList.jsx'; // 대화방 리스트 컴포넌트
+import CreateWorkspacePage from './pages/CreateWorkspacePage.jsx';
+import ConversationList from './components/ConversationList.jsx';
 import TextEditor from './quill/TextEditor';
 
 const App = () => {
@@ -39,6 +40,9 @@ const App = () => {
                         )
                     }
                 />
+
+                {/* 워크스페이스 생성 페이지 */}
+                <Route path="/workspace/create" element={<CreateWorkspacePage />} />
 
                 {/* 대화방 및 텍스트 에디터를 포함한 메인 레이아웃 */}
                 <Route

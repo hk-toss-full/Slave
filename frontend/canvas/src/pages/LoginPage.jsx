@@ -27,6 +27,7 @@ function LoginPage({ onLogin }) {
             localStorage.setItem('userId', response.data.userId); // 사용자 ID 저장
             alert("로그인 성공");
             onLogin(); // App 컴포넌트의 로그인 콜백 호출
+            navigate('/workspaces');
         } catch (error) {
             alert("로그인에 실패했습니다.");
         }
