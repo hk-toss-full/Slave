@@ -7,7 +7,6 @@ function SignUpPage() {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [nickname, setNickname] = useState('');
-    const [profileImage, setProfileImage] = useState(null);
     const [isCodeSent, setIsCodeSent] = useState(false);
     const [isCodeVerified, setIsCodeVerified] = useState(false); // 인증 코드 검증 상태
     const navigate = useNavigate();
@@ -34,11 +33,6 @@ function SignUpPage() {
         }
     };
 
-    // 프로필 이미지 선택 핸들러
-    const handleProfileImageChange = (e) => {
-        setProfileImage(e.target.files[0]);
-    };
-
     // 3단계: 이름과 프로필 이미지 업로드 후 회원가입 완료
     const handleRegister = async () => {
         if (!nickname) {
@@ -51,9 +45,6 @@ function SignUpPage() {
             const formData = new FormData();
             formData.append('email', email);
             formData.append('nickname', nickname);
-            if (profileImage) {
-                formData.append('profileImage', profileImage);
-            }
 
             await api.post('/auth/register/complete', formData, {
                 headers: {
@@ -103,11 +94,6 @@ function SignUpPage() {
                         placeholder="닉네임 설정"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProfileImageChange}
                     />
                     <button onClick={handleRegister}>회원가입 완료</button>
                 </div>

@@ -20,13 +20,9 @@ public class User {
     @Column(nullable = false, length = 50)
     private String userName;
 
-    @Column(length = 255)
-    private String userImage;
-
     // 추가된 생성자
-    public User(String userEmail, String userName, String userImage) {
+    public User(String userEmail, String userName) {
         this.userEmail = userEmail;
         this.userName = userName;
-        this.userImage = userImage;
     }
 }

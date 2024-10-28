@@ -62,7 +62,7 @@ public class AuthController {
     }
 
     @PostMapping("/register/complete")
-    public ResponseEntity<String> completeRegistration(@RequestParam String email, @RequestParam String nickname, @RequestParam(required = false) MultipartFile profileImage) {
+    public ResponseEntity<String> completeRegistration(@RequestParam String email, @RequestParam String nickname) {
         // 회원가입 처리 로직
         return ResponseEntity.ok("회원가입이 완료되었습니다!");
     }

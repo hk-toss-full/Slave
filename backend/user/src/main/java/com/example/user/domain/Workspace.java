@@ -11,5 +11,4 @@ public class Workspace {
     private Long workspaceId;
 
     private String workspaceName;
-    private String workspaceImage;
 }

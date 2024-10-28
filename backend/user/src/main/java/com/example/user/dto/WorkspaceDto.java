@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WorkspaceDto {
     private String name;
-    private String image;
 }

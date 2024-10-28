@@ -23,10 +23,9 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public Workspace createWorkspace(String name, String image, Long userId) {
+    public Workspace createWorkspace(String name, Long userId) {
         Workspace workspace = new Workspace();
         workspace.setWorkspaceName(name);
-        workspace.setWorkspaceImage(image != null ? image : "/default_workspace.jpg");
         Workspace savedWorkspace = workspaceRepository.save(workspace);
 
         UserWorkspaceAccess access = new UserWorkspaceAccess();
@@ -47,7 +46,7 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public Workspace updateWorkspace(Long workspaceId, String name, String image, Long userId) {
+    public Workspace updateWorkspace(Long workspaceId, String name, Long userId) {
         UserWorkspaceAccess access = userWorkspaceAccessRepository.findById(new UserWorkspaceAccessId(userId, workspaceId))
                 .orElseThrow(() -> new IllegalArgumentException("워크스페이스 접근 권한이 없습니다."));
 
@@ -59,7 +58,6 @@ public class WorkspaceService {
                 .orElseThrow(() -> new IllegalArgumentException("워크스페이스를 찾을 수 없습니다."));
 
         workspace.setWorkspaceName(name);
-        workspace.setWorkspaceImage(image != null ? image : workspace.getWorkspaceImage());
 
         return workspaceRepository.save(workspace);
     }

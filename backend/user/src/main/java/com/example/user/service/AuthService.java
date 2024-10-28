@@ -97,10 +97,9 @@ public class AuthService {
 
         // 기본 사용자 이름과 프로필 이미지 설정
         String defaultUserName = email.split("@")[0];
-        String defaultUserImage = null;
 
         // User 객체 생성 및 저장
-        User user = new User(email, defaultUserName, defaultUserImage);
+        User user = new User(email, defaultUserName);
         userRepository.save(user);  // 사용자 정보 저장
         verificationCodes.remove(email); // 사용한 인증 코드 제거
         logger.info("회원가입 성공 - 이메일: {}", email);
