@@ -1,6 +1,5 @@
 package com.canvas.back.canvas.service;
 
-import com.canvas.back.canvas.DTO.CanvasHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,11 +23,6 @@ public class CanvasServiceImpl implements CanvasService {
     @Override
     public String keyCanvas(String workspace_id, String conversation_id, String canvas_id) {
         return "canvas:" + workspace_id + ":" + conversation_id + ":" + canvas_id;
-    }
-
-    @Override
-    public String keyCanvasHeader(CanvasHeader canvasHeader) {
-        return canvasHeader.toString();
     }
 
     @Override

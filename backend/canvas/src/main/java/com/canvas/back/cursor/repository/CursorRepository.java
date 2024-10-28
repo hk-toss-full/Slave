@@ -1,4 +1,4 @@
-package com.canvas.back.canvas.repository;
+package com.canvas.back.cursor.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,15 +9,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @RequiredArgsConstructor
-public class CanvasRepository {
+public class CursorRepository {
 
     private final LettuceConnectionFactory connectionFactory;
 
-    @Bean
-    public RedisTemplate<String, byte[]> redisTemplate() {
-        RedisTemplate<String, byte[]> template = new RedisTemplate<>();
+    @Bean(name = "myStringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate() {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
         return template;
     }
 }

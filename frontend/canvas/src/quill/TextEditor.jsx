@@ -5,14 +5,14 @@ import * as Y from 'yjs';
 import { QuillBinding } from 'y-quill';
 import QuillCursors from 'quill-cursors';
 import debounce from 'lodash.debounce';
-import { getData, postData } from "./utils/Data.js";
+import {getCanvas, postCanvas, sseCanvas} from "./utils/Canvas.js";
 import { modules } from "./utils/TextEditorModules.js";
 import { Awareness } from 'y-protocols/awareness';
-import {getCursor, postCursor} from "./utils/Cursor.js";
+import {postCursor, sseCursor} from "./utils/Cursor.js";
 import {CustomStyle, Separator} from "./utils/CustomStyle.js";
 import {EventKey} from "./utils/EventKey.js";
 
-const ip = `172.25.36.80`;
+const ip = `192.168.10.69`;
 const url = `http://${ip}:8080/api/v1/canvas`;
 
 Quill.register('modules/cursors', QuillCursors);
@@ -20,7 +20,7 @@ Quill.register(CustomStyle, true);
 Quill.register(Separator);
 const workspace_id = 1;
 const conversation_id = 1;
-const canvas_id = 3;
+const canvas_id = localStorage.getItem('canvas_id') || 1 ;
 
 const TextEditor = () => {
     const quillRef = useRef(null);
@@ -33,29 +33,8 @@ const TextEditor = () => {
         const textType = doc.getText('quill-content');
         const binding = new QuillBinding(textType, quill, awareness);
 
-        const createEventSource = () => {
-            const eventSource = new EventSource(`${url}/sse/${workspace_id}/${conversation_id}/${canvas_id}`);
 
-            eventSource.onmessage = (event) => {
-                cursors.clearCursors();
-                JSON.parse(event.data).forEach(cursor => {
-                    if (cursor.cursor.name !== userID) {
-                        cursors.createCursor(cursor.cursor.name, cursor.cursor.name, cursor.cursor.color);
-                        cursors.moveCursor(cursor.cursor.name, cursor.cursor.range);
-                    }
-                })
-            };
 
-            eventSource.onerror = () => {
-                console.error('Error with SSE, attempting to reconnect...');
-                eventSource.close();
-                setTimeout(() => {
-                    createEventSource(); // 일정 시간 후 재연결 시도
-                }, 3000); // 3초 후 재연결
-            };
-        };
-
-        createEventSource();
         // Awareness update for handling user presence and cursors
         awareness.on('change', () => {
             awareness.getStates().forEach((state, clientID) => {
@@ -72,7 +51,7 @@ const TextEditor = () => {
             userID = `user-${Math.floor(Math.random() * 1000)}`;
             localStorage.setItem('userID', userID);
         }
-
+        sseCursor(url, workspace_id, conversation_id, canvas_id, cursors, userID);
         // Set awareness for the current user
         awareness.setLocalStateField('user', {
             name: userID,
@@ -97,15 +76,15 @@ const TextEditor = () => {
         });
 
         // 커서 정보 요청
-        const handleGetCursor = async () => {
-            await getCursor(url, workspace_id, conversation_id, canvas_id, userID, cursors)
-        }
+        // const handleGetCursor = async () => {
+        //     await getCursor(url, workspace_id, conversation_id, canvas_id, userID, cursors)
+        // }
         // 커서 요청 반복
         //const cursorDataInterval = setInterval(handleGetCursor, 1000);
 
         // 텍스트 발송
         const debouncedUpdateHandler = debounce(async () => {
-            await postData(url, workspace_id, conversation_id, canvas_id, doc, Y);
+            await postCanvas(url, workspace_id, conversation_id, canvas_id, doc, Y);
         }, 250);
 
         const updateHandler = () => debouncedUpdateHandler();
@@ -113,15 +92,17 @@ const TextEditor = () => {
 
         // 텍스트 요청
         const handleGetData = async () => {
-            await getData(url, workspace_id, conversation_id, canvas_id, doc, Y);
+            await getCanvas(url, workspace_id, conversation_id, canvas_id, doc, Y);
         };
         // 최초 로딩
         handleGetData();
 
-        const dataInterval = setInterval(handleGetData, 1000);
+        sseCanvas(url, workspace_id, conversation_id, canvas_id, doc, Y);
+
+        //const dataInterval = setInterval(handleGetData, 1000);
 
         return () => {
-            clearInterval(dataInterval);
+            //clearInterval(dataInterval);
             //clearInterval(cursorDataInterval);
             doc.off('update', updateHandler);
             binding.destroy();
