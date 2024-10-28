@@ -15,7 +15,6 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-!.front/node_modules/react-quill/*
 .idea
 .DS_Store
 *.suo
