@@ -1,10 +1,12 @@
 package com.canvas.back.cursor.controller;
 
 
+import com.canvas.back.cursor.service.CursorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -18,12 +20,7 @@ import java.util.*;
 @RequestMapping("api/v1/canvas/cursor")
 @RequiredArgsConstructor
 public class CursorController {
-    private final RedisTemplate<String, byte[]> redisTemplate;
-    private final Map<String, List<SseEmitter>> emittersMap = new HashMap<>();
-
-    @Autowired
-    @Qualifier("myStringRedisTemplate")
-    private RedisTemplate<String, String> myStringRedisTemplate;
+    private final CursorService cursorService;
 
     @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
     public SseEmitter sseCursor(
@@ -31,17 +28,7 @@ public class CursorController {
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        SseEmitter emitter = new SseEmitter(0L); // 타임아웃을 무제한으로 설정
-        String id = workspace_id + conversation_id + canvas_id;
-
-        emittersMap.putIfAbsent(id, new ArrayList<>());
-        emittersMap.get(id).add(emitter);
-
-        emitter.onCompletion(() -> emittersMap.get(id).remove(emitter));
-        emitter.onTimeout(() -> emittersMap.get(id).remove(emitter));
-        emitter.onError((e) -> emittersMap.get(id).remove(emitter));
-
-        return emitter;
+        return cursorService.createEmitter(workspace_id, conversation_id, canvas_id);
     }
 
     @PostMapping("/sse")
@@ -52,67 +39,30 @@ public class CursorController {
             @RequestHeader String user_id,
             @RequestBody String cursor
     ) {
-        String id = workspace_id + conversation_id + canvas_id;
-        String encodedText = user_id.substring(user_id.indexOf("B?") + 2, user_id.lastIndexOf("?="));
-        byte[] decodedBytes = Base64.getDecoder().decode(encodedText);
-        String user_idde = new String(decodedBytes, StandardCharsets.UTF_8);
-
-        List<SseEmitter> deadEmitters = new ArrayList<>();
-        List<SseEmitter> emitters = emittersMap.getOrDefault(id, new ArrayList<>());
-        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_idde;
-        System.out.println("post cursor " + key);
-        myStringRedisTemplate.opsForValue().set(key, cursor, Duration.ofMinutes(1));
-
-        final String key1 = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
-        Set<String> keys = myStringRedisTemplate.keys(key1);
-        List<String> values = myStringRedisTemplate.opsForValue().multiGet(Objects.requireNonNull(keys));
-
-        for (SseEmitter emitter : emitters) {
-            try {
-                emitter.send(" " + values);
-            } catch (Exception e) {
-                deadEmitters.add(emitter);
-            }
-        }
-        emitters.removeAll(deadEmitters);
+        cursorService.sendCursorUpdate(workspace_id, conversation_id, canvas_id, user_id, cursor);
     }
 
     @PostMapping
-    public ResponseEntity<Void> receiveAwarenessUpdate(
+    public ResponseEntity<Void> postCursor(
             @RequestHeader String workspace_id,
             @RequestHeader String conversation_id,
             @RequestHeader String canvas_id,
             @RequestHeader String user_id,
             @RequestBody String cursor
     ) {
-        String encodedText = user_id.substring(user_id.indexOf("B?") + 2, user_id.lastIndexOf("?="));
-        byte[] decodedBytes = Base64.getDecoder().decode(encodedText);
-        String user_idde = new String(decodedBytes, StandardCharsets.UTF_8);
-        if (cursor == null || cursor.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":" + user_idde;
-        System.out.println("post cursor " + key);
-        myStringRedisTemplate.opsForValue().set(key, cursor, Duration.ofMinutes(1));
-        return ResponseEntity.ok().build();
+        if (cursor == null || cursor.isEmpty()) {return ResponseEntity.badRequest().build();}
+        boolean isSuccess = cursorService.saveCursor(workspace_id, conversation_id, canvas_id, user_id, cursor);
+        return isSuccess ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @GetMapping("/{workspace_id}/{conversation_id}/{canvas_id}")
-    public ResponseEntity<List<String>> getAwarenessState(
+    public ResponseEntity<List<String>> getCursor(
             @PathVariable String workspace_id,
             @PathVariable String conversation_id,
             @PathVariable String canvas_id
     ) {
-        final String key = "cursor:" + workspace_id + ":" + conversation_id + ":" + canvas_id + ":*";
-        Set<String> keys = myStringRedisTemplate.keys(key);
-        if (keys == null || keys.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        List<String> values = myStringRedisTemplate.opsForValue().multiGet(keys);
-        if (values == null || values.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        System.out.println("get cursor " + key);
-        return ResponseEntity.ok().body(values);
+        List<String> cursorValues = cursorService.getCursorValues(workspace_id, conversation_id, canvas_id);
+        if (cursorValues == null || cursorValues.isEmpty()) {return ResponseEntity.noContent().build();}
+        return ResponseEntity.ok().body(cursorValues);
     }
 }
