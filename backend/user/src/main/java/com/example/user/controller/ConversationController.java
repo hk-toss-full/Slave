@@ -1,35 +1,39 @@
 package com.example.user.controller;
 
 import com.example.user.domain.Conversation;
-import com.example.user.dto.ConversationDto;
+import com.example.user.domain.Workspace;
 import com.example.user.service.ConversationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import com.example.user.domain.User;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/conversations")
+@RequestMapping("/conversation")
+@RequiredArgsConstructor
 public class ConversationController {
 
-    @Autowired
-    private ConversationService conversationService;
+    private final ConversationService conversationService;
+
+    @GetMapping("/list")
+    public List<Conversation> getConversations(@RequestParam Long workspaceId, @RequestParam Long userId) {
+        return conversationService.getConversations(workspaceId, userId);
+    }
 
     @PostMapping("/create")
-    public Conversation createConversation(@RequestBody ConversationDto conversationDto, @RequestParam User creator) {
-        return conversationService.createConversation(conversationDto, creator);
+    public Conversation createConversation(@RequestParam String name, @RequestParam int type, @RequestParam boolean isPrivate, @RequestParam Long workspaceId) {
+        Workspace workspace = new Workspace();
+        workspace.setWorkspaceId(workspaceId);
+        return conversationService.createConversation(name, type, isPrivate, workspace);
     }
 
-    @PutMapping("/{conversationId}/update")
-    public Conversation updateConversation(
-            @PathVariable Long conversationId,
-            @RequestBody ConversationDto conversationDto) {
-        // DTO를 이용해 setter 없이 Conversation 업데이트
-        return conversationService.updateConversation(conversationId, conversationDto);
+    @PutMapping("/update")
+    public Conversation updateConversation(@RequestParam Long conversationId, @RequestParam String name, @RequestParam boolean isPrivate, @RequestParam Long userId) {
+        return conversationService.updateConversation(conversationId, name, isPrivate, userId);
     }
 
-    @DeleteMapping("/{conversationId}")
-    public String deleteConversation(@PathVariable Long conversationId) {
-        conversationService.deleteConversation(conversationId);
-        return "대화방이 삭제되었습니다.";
+    @DeleteMapping("/delete")
+    public void deleteConversation(@RequestParam Long conversationId, @RequestParam Long userId) {
+        conversationService.deleteConversation(conversationId, userId);
     }
 }

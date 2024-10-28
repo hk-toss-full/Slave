@@ -1,84 +1,66 @@
-// WorkspaceService.java
 package com.example.user.service;
 
-import com.example.user.domain.User;
 import com.example.user.domain.UserWorkspaceAccess;
+import com.example.user.domain.UserWorkspaceAccessId;
 import com.example.user.domain.Workspace;
-import com.example.user.dto.WorkspaceDto;
-import com.example.user.repository.UserRepository;
 import com.example.user.repository.UserWorkspaceAccessRepository;
 import com.example.user.repository.WorkspaceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
+@RequiredArgsConstructor
 public class WorkspaceService {
 
-    @Autowired
-    private WorkspaceRepository workspaceRepository;
+    private final WorkspaceRepository workspaceRepository;
+    private final UserWorkspaceAccessRepository userWorkspaceAccessRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserWorkspaceAccessRepository userWorkspaceAccessRepository;
-
-    public List<Workspace> getAllWorkspaces() {
-        return workspaceRepository.findAll();
+    public List<Workspace> getUserWorkspaces(Long userId) {
+        return workspaceRepository.findAll(); // 유저가 접근 가능한 워크스페이스 리스트 반환
     }
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-
-    public void createWorkspace(WorkspaceDto workspaceDto) {
+    @Transactional
+    public Workspace createWorkspace(String name, String image, Long userId) {
         Workspace workspace = new Workspace();
-        workspace.setWorkspaceName(workspaceDto.getName());
-        workspaceRepository.save(workspace);
+        workspace.setWorkspaceName(name);
+        workspace.setWorkspaceImage(image != null ? image : "/default_workspace.jpg");
+        Workspace savedWorkspace = workspaceRepository.save(workspace);
+
+        UserWorkspaceAccess access = new UserWorkspaceAccess();
+        access.setId(new UserWorkspaceAccessId(userId, savedWorkspace.getWorkspaceId()));
+        access.setAdmin(true);
+        userWorkspaceAccessRepository.save(access);
+
+        return savedWorkspace;
     }
 
-    public void inviteUser(Long workspaceId, String email) {
-        if (!isValidEmail(email)) {
-            throw new IllegalArgumentException("유효하지 않은 이메일 형식입니다!");
+    @Transactional
+    public void deleteWorkspace(Long workspaceId, Long userId) {
+        if (userWorkspaceAccessRepository.existsById(new UserWorkspaceAccessId(userId, workspaceId))) {
+            workspaceRepository.deleteById(workspaceId);
+        } else {
+            throw new IllegalArgumentException("관리자 권한이 필요합니다.");
+        }
+    }
+
+    @Transactional
+    public Workspace updateWorkspace(Long workspaceId, String name, String image, Long userId) {
+        UserWorkspaceAccess access = userWorkspaceAccessRepository.findById(new UserWorkspaceAccessId(userId, workspaceId))
+                .orElseThrow(() -> new IllegalArgumentException("워크스페이스 접근 권한이 없습니다."));
+
+        if (!access.isAdmin()) {
+            throw new IllegalArgumentException("관리자 권한이 필요합니다.");
         }
 
-        Optional<User> userOptional = userRepository.findByUserEmail(email);
-
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("초대할 수 없는 사용자입니다!");
-        }
-
-        User user = userOptional.get();
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new IllegalArgumentException("워크스페이스가 존재하지 않습니다!"));
+                .orElseThrow(() -> new IllegalArgumentException("워크스페이스를 찾을 수 없습니다."));
 
-        // 이미 초대된 유저인지 확인
-        if (userWorkspaceAccessRepository.existsByUserIdAndWorkspaceId(user.getUserId(), workspaceId)) {
-            throw new IllegalArgumentException("해당 사용자는 이미 워크스페이스에 초대되었습니다.");
-        }
+        workspace.setWorkspaceName(name);
+        workspace.setWorkspaceImage(image != null ? image : workspace.getWorkspaceImage());
 
-        // 워크스페이스 초대 저장
-        UserWorkspaceAccess userWorkspaceAccess = new UserWorkspaceAccess();
-        userWorkspaceAccess.setUser(user);
-        userWorkspaceAccess.setWorkspace(workspace);
-        userWorkspaceAccessRepository.save(userWorkspaceAccess);
-    }
-
-    public void updateWorkspace(Long workspaceId, WorkspaceDto workspaceDto) {
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow();
-        workspace.setWorkspaceName(workspaceDto.getName());
-        workspace.setWorkspaceImage(workspaceDto.getImage());
-        workspaceRepository.save(workspace);
-    }
-
-    public void deleteWorkspace(Long workspaceId) {
-        workspaceRepository.deleteById(workspaceId);
-    }
-
-    private boolean isValidEmail(String email) {
-        return EMAIL_PATTERN.matcher(email).matches();
+        return workspaceRepository.save(workspace);
     }
 }

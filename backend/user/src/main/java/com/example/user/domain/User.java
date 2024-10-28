@@ -1,25 +1,24 @@
 package com.example.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "user_email")})
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Integer userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 100)
     private String userEmail;
 
-    private String userImage;
+    @Column(nullable = false, length = 50)
+    private String userName;
 
-    @Column(nullable = false)
-    private boolean isAdmin;
+    @Column(length = 255)
+    private String userImage;
 }

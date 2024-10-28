@@ -1,7 +1,9 @@
 package com.example.user.domain;
 
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -9,7 +11,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserWorkspaceAccessId implements Serializable {
+public class UserConversationAccessId implements Serializable {
     private Long userId;
-    private Long workspaceId;
+    private Long conversationId;
 }

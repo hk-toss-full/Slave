@@ -1,46 +1,37 @@
 package com.example.user.controller;
 
 import com.example.user.domain.Workspace;
-import com.example.user.dto.WorkspaceDto;
 import com.example.user.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/workspace")
 @RequiredArgsConstructor
-@RequestMapping("/workspaces")
 public class WorkspaceController {
+
     private final WorkspaceService workspaceService;
 
-    @GetMapping("/all")
-    public List<Workspace> getAllWorkspaces() {
-        return workspaceService.getAllWorkspaces();
+    @GetMapping("/list")
+    public List<Workspace> getUserWorkspaces(@RequestParam Long userId) {
+        return workspaceService.getUserWorkspaces(userId);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createWorkspace(@RequestBody WorkspaceDto workspaceDto) {
-        workspaceService.createWorkspace(workspaceDto);
-        return ResponseEntity.ok("워크스페이스가 생성되었습니다.");
+    public Workspace createWorkspace(@RequestParam String name, @RequestParam(required = false) String image, @RequestParam Long userId) {
+        return workspaceService.createWorkspace(name, image, userId);
     }
 
-    @PostMapping("/{workspaceId}/invite")
-    public ResponseEntity<String> inviteUserToWorkspace(@PathVariable Long workspaceId, @RequestBody String email) {
-        workspaceService.inviteUser(workspaceId, email);
-        return ResponseEntity.ok("초대가 완료되었습니다.");
+    @PutMapping("/update")
+    public Workspace updateWorkspace(@RequestParam Long workspaceId, @RequestParam String name, @RequestParam(required = false) String image, @RequestParam Long userId) {
+        return workspaceService.updateWorkspace(workspaceId, name, image, userId);
     }
 
-    @PutMapping("/{workspaceId}")
-    public ResponseEntity<String> updateWorkspace(@PathVariable Long workspaceId, @RequestBody WorkspaceDto workspaceDto) {
-        workspaceService.updateWorkspace(workspaceId, workspaceDto);
-        return ResponseEntity.ok("워크스페이스가 수정되었습니다.");
-    }
 
-    @DeleteMapping("/{workspaceId}")
-    public ResponseEntity<String> deleteWorkspace(@PathVariable Long workspaceId) {
-        workspaceService.deleteWorkspace(workspaceId);
-        return ResponseEntity.ok("워크스페이스가 삭제되었습니다.");
+    @DeleteMapping("/delete")
+    public void deleteWorkspace(@RequestParam Long workspaceId, @RequestParam Long userId) {
+        workspaceService.deleteWorkspace(workspaceId, userId);
     }
 }
