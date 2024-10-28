@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
@@ -21,4 +22,11 @@ public class User {
 
     @Column(length = 255)
     private String userImage;
+
+    // 추가된 생성자
+    public User(String userEmail, String userName, String userImage) {
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.userImage = userImage;
+    }
 }
