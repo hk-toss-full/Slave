@@ -2,12 +2,9 @@ package com.canvas.back.canvas.controller;
 
 import com.canvas.back.canvas.service.CanvasService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -15,32 +12,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CanvasController {
 
-    public String byteArrayToString(byte[] byteArray) {
-        return Base64.getEncoder().encodeToString(byteArray);
-    }
-
-    private final RedisTemplate<String, byte[]> redisTemplate;
     private final CanvasService canvasService;
-    private final Map<String, List<SseEmitter>> emittersMap = new HashMap<>();
-
-    @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
-    public SseEmitter sseCanvas(
-            @PathVariable String workspace_id,
-            @PathVariable String conversation_id,
-            @PathVariable String canvas_id
-    ) {
-        SseEmitter emitter = new SseEmitter(0L); // 타임아웃을 무제한으로 설정
-        String id = workspace_id+conversation_id+canvas_id;
-
-        emittersMap.putIfAbsent(id, new ArrayList<>());
-        emittersMap.get(id).add(emitter);
-
-        emitter.onCompletion(() -> emittersMap.get(id).remove(emitter));
-        emitter.onTimeout(() -> emittersMap.get(id).remove(emitter));
-        emitter.onError((e) -> emittersMap.get(id).remove(emitter));
-
-        return emitter;
-    }
 
     @PostMapping("/sse")
     public void postSeeCanvas(
@@ -50,24 +22,16 @@ public class CanvasController {
             @RequestBody byte[] update
     ) {
         System.out.println("post sse canvas");
-        String id = workspace_id + conversation_id + canvas_id;
-        String key = canvasService.keyCanvas(workspace_id, conversation_id, canvas_id);
-        canvasService.saveCanvas(key, update);
+        canvasService.sendUpdateToEmitters(workspace_id, conversation_id, canvas_id, update);
+    }
 
-        List<SseEmitter> deadEmitters = new ArrayList<>();
-        List<SseEmitter> emitters = emittersMap.getOrDefault(id, new ArrayList<>());
-
-        byte[] canvas = canvasService.findOneCanvas(key);
-        String encodedCanvas = Base64.getEncoder().encodeToString(canvas); // Base64로 인코딩
-
-        for (SseEmitter emitter : emitters) {
-            try {
-                emitter.send(encodedCanvas);  // Base64로 인코딩된 문자열 전송
-            } catch (Exception e) {
-                deadEmitters.add(emitter);
-            }
-        }
-        emitters.removeAll(deadEmitters);
+    @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
+    public SseEmitter sseCanvas(
+            @PathVariable String workspace_id,
+            @PathVariable String conversation_id,
+            @PathVariable String canvas_id
+    ) {
+        return canvasService.createSseEmitter(workspace_id, conversation_id, canvas_id);
     }
 
     @PostMapping
@@ -80,9 +44,7 @@ public class CanvasController {
         if (update == null || update.length == 0) {
             return ResponseEntity.badRequest().build();
         }
-        String key = canvasService.keyCanvas(workspace_id, conversation_id, canvas_id);
-        canvasService.saveCanvas(key, update);
-        System.out.println("post " + key);
+        canvasService.updateCanvas(workspace_id, conversation_id, canvas_id, update);
         return ResponseEntity.ok().build();
     }
 

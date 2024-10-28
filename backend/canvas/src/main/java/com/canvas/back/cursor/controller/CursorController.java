@@ -3,17 +3,12 @@ package com.canvas.back.cursor.controller;
 
 import com.canvas.back.cursor.service.CursorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.*;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,15 +16,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CursorController {
     private final CursorService cursorService;
-
-    @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
-    public SseEmitter sseCursor(
-            @PathVariable String workspace_id,
-            @PathVariable String conversation_id,
-            @PathVariable String canvas_id
-    ) {
-        return cursorService.createEmitter(workspace_id, conversation_id, canvas_id);
-    }
 
     @PostMapping("/sse")
     public void postSeeCursor(
@@ -39,7 +25,17 @@ public class CursorController {
             @RequestHeader String user_id,
             @RequestBody String cursor
     ) {
+        System.out.println("post sse cursor");
         cursorService.sendCursorUpdate(workspace_id, conversation_id, canvas_id, user_id, cursor);
+    }
+
+    @GetMapping("/sse/{workspace_id}/{conversation_id}/{canvas_id}")
+    public SseEmitter sseCursor(
+            @PathVariable String workspace_id,
+            @PathVariable String conversation_id,
+            @PathVariable String canvas_id
+    ) {
+        return cursorService.createEmitter(workspace_id, conversation_id, canvas_id);
     }
 
     @PostMapping

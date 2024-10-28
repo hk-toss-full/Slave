@@ -73,7 +73,7 @@ public class CursorServiceImpl implements CursorService {
             myStringRedisTemplate.opsForValue().set(key, cursor, Duration.ofMinutes(1));
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error saving cursor: " + e.getMessage());
             return false;
         }
     }
