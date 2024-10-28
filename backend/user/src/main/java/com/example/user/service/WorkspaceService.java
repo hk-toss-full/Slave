@@ -22,6 +22,11 @@ public class WorkspaceService {
         return workspaceRepository.findAll(); // 유저가 접근 가능한 워크스페이스 리스트 반환
     }
 
+    public Workspace getWorkspaceById(Long workspaceId) {
+        return workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found with ID: " + workspaceId));
+    }
+
     @Transactional
     public Workspace createWorkspace(String name, Long userId) {
         Workspace workspace = new Workspace();

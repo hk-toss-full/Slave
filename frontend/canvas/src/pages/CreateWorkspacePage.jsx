@@ -8,13 +8,14 @@ const CreateWorkspacePage = ({ userId }) => {
 
     const handleCreateWorkspace = async () => {
         try {
-            const formData = new FormData();
-            formData.append('name', workspaceName);
-            formData.append('userId', userId);
+            const data = {
+                name: workspaceName,
+                userId: userId,
+            };
 
-            const response = await axios.post('http://localhost:8080/workspace/create', formData, {
+            const response = await axios.post('http://localhost:8080/workspace/create', data, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
                 },
             });
 

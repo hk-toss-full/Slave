@@ -1,6 +1,7 @@
 package com.example.user.controller;
 
 import com.example.user.domain.Workspace;
+import com.example.user.dto.WorkspaceCreateRequest;
 import com.example.user.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,8 @@ public class WorkspaceController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Workspace> createWorkspace(
-            @RequestPart("name") String name, @RequestPart("userId") Long userId) {
-
-        // 워크스페이스 생성 서비스 호출 (인코딩된 이미지와 함께 전달)
-        Workspace workspace = workspaceService.createWorkspace(name, userId);
+    public ResponseEntity<Workspace> createWorkspace(@RequestBody WorkspaceCreateRequest request) {
+        Workspace workspace = workspaceService.createWorkspace(request.getName(), request.getUserId());
         return ResponseEntity.ok(workspace);
     }
 
