@@ -12,7 +12,7 @@ import {postCursor, sseCursor} from "./utils/Cursor.js";
 import {CustomStyle, Separator} from "./utils/CustomStyle.js";
 import {EventKey} from "./utils/EventKey.js";
 
-const ip = `192.168.10.69`;
+const ip = `localhost`;
 const url = `http://${ip}:8080/api/v1`;
 
 Quill.register('modules/cursors', QuillCursors);
