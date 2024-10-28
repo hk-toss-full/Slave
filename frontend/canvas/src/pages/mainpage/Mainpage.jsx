@@ -1,5 +1,5 @@
 import {Toolbar} from "./component/Toolbar.jsx";
-import {Workspace} from "./component/Workspace.jsx";
+import {Workspace} from "./component/workspace/Workspace.jsx";
 
 export const Mainpage = () => {
     return (
