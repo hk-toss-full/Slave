@@ -1,0 +1,43 @@
+package com.example.user.controller;
+
+import com.example.user.domain.Workspace;
+import com.example.user.service.WorkspaceService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/workspace")
+@RequiredArgsConstructor
+public class WorkspaceController {
+
+    private final WorkspaceService workspaceService;
+
+    @GetMapping("/list")
+    public List<Workspace> getUserWorkspaces(@RequestParam Long userId) {
+        return workspaceService.getUserWorkspaces(userId);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Workspace> createWorkspace(
+            @RequestPart("name") String name, @RequestPart("userId") Long userId) {
+
+        // 워크스페이스 생성 서비스 호출 (인코딩된 이미지와 함께 전달)
+        Workspace workspace = workspaceService.createWorkspace(name, userId);
+        return ResponseEntity.ok(workspace);
+    }
+
+
+    @PutMapping("/update")
+    public Workspace updateWorkspace(@RequestParam Long workspaceId, @RequestParam String name, @RequestParam Long userId) {
+        return workspaceService.updateWorkspace(workspaceId, name, userId);
+    }
+
+
+    @DeleteMapping("/delete")
+    public void deleteWorkspace(@RequestParam Long workspaceId, @RequestParam Long userId) {
+        workspaceService.deleteWorkspace(workspaceId, userId);
+    }
+}
