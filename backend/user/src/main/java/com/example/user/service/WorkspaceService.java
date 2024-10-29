@@ -21,13 +21,13 @@ public class WorkspaceService {
     private final UserRepository userRepository;
 
     public List<Workspace> getUserWorkspacesByEmail(String email) {
-        Long userId = userRepository.findUserIdByEmail(email)
+        Long userId = userRepository.findUserIdByUserEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이메일입니다."));
-        return workspaceRepository.findAllByUserId(userId); // userId로 워크스페이스 목록 조회
+        return getUserWorkspaces(userId); // userId로 워크스페이스 목록 조회
     }
 
     public List<Workspace> getUserWorkspaces(Long userId) {
-        return workspaceRepository.findAll(); // 유저가 접근 가능한 워크스페이스 리스트 반환
+        return workspaceRepository.findAllByUserId(userId); // 유저가 접근 가능한 워크스페이스 리스트 반환
     }
 
     public Workspace getWorkspaceById(Long workspaceId) {
