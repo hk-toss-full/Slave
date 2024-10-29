@@ -25,7 +25,7 @@ const TextEditor = ({canvas_id}) => {
     const quillRef = useRef(null);
     const [doc] = useState(new Y.Doc());
     const [awareness] = useState(new Awareness(doc));
-    const [workspace_id] = useRecoilValue(WorkspaceState)
+    const [workspace_id, setWorkspace_id] = useRecoilState(WorkspaceState)
     const [conversation_id,setConversation_id] = useRecoilState(ConversationState)
 
     useEffect(() => {

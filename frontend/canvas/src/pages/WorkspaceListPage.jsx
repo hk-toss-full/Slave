@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useRecoilState, useRecoilValue} from "recoil";
-import {EmailState} from "../stores/Atom.jsx";
+import {EmailState, WorkspaceState} from "../stores/Atom.jsx";
 import api from '../api/axios';
 
 function WorkspaceListPage() {
     const navigate = useNavigate();
     const email = useRecoilValue(EmailState);
     const [workspaces, setWorkspaces] = useState([])
+    const [workspace_id, setWorkspace_id] = useRecoilState(WorkspaceState)
 
 
     useEffect(() => {
@@ -50,7 +51,11 @@ function WorkspaceListPage() {
                         return <div
                             className={`w-full h-[107px] bg-white ${index === workspaces.length - 1 && `rounded-b-[5px]`} flex items-center justify-between p-4`}>
                             <span>{workspace.workspaceName}</span>
-                            <button onClick={() => navigate('/app')}
+                            <button onClick={() => {
+                                setWorkspace_id(workspace.workspaceId)
+                                navigate('/app')
+                            }
+                            }
                                     className={"w-[158px] h-[52px] bg-[#4A154B] rounded-[4px] text-white text-[14px]"}>
                                 워크스페이스 입장
                             </button>

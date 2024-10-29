@@ -1,28 +1,29 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ConversationTop} from "./ConversationTop.jsx";
 import {ShopIcon} from "./img/ShopIcon.jsx";
 import ConversationList from "../../../../../components/ConversationList.jsx";
 import {useRecoilState} from "recoil";
-import {ConversationNameState, ConversationState} from "../../../../../stores/Atom.jsx";
+import {
+    ConversationListState,
+    ConversationNameState,
+    ConversationState,
+    WorkspaceState
+} from "../../../../../stores/Atom.jsx";
+import api from "../../../../../api/axios.js";
 
 export const ConversationBar = () => {
     const [isChannelDropdownOpen, setIsChannelDropdownOpen] = useState(false);
     const [showChannelPopup, setShowChannelPopup] = useState(false);
-    const [conversationDropdownData, setconversationDropdownData] = useState([
-        {conversationId: 1, conversationName: '공지사항', conversationType: 1},
-        {conversationId: 2, conversationName: '조경준', conversationType: 2},
-        {conversationId: 3, conversationName: '한경프론트엔드', conversationType: 1},
-        {conversationId: 4, conversationName: '한경풀스택', conversationType: 1},
-        {conversationId: 5, conversationName: '조예은', conversationType: 2},
-        {conversationId: 6, conversationName: '이승진', conversationType: 2},
-        {conversationId: 7, conversationName: '한경백엔드', conversationType: 1}
-    ]);
+    const [conversationDropdownData, setconversationDropdownData] = useRecoilState(ConversationListState);
+    const [workspace_id, setWorkspace_id] = useRecoilState(WorkspaceState)
     const [conversationName, setConversationName] = useRecoilState(ConversationNameState)
 
     const [conversationId, setConversationId] = useRecoilState(ConversationState)
 
     const [isDMDropdownOpen, setIsDMDropdownOpen] = useState(false);
     const [showDMPopup, setShowDMPopup] = useState(false);
+
+
 
     const toggleChannelDropdown = () => {
         setIsChannelDropdownOpen(!isChannelDropdownOpen);
@@ -53,7 +54,7 @@ export const ConversationBar = () => {
         <>
             <div className={"w-[260px] bg-[#5D2D5F] h-full"}>
                 <ConversationTop/>
-                <ConversationList workspaceId={1} />
+                <ConversationList workspaceId={workspace_id} />
                 <div>
                     <div className={"w-full h-3"}></div>
                 </div>

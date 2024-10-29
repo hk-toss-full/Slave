@@ -11,7 +11,7 @@ export const ConversationMenubar = () => {
     const [Menu, setMenu] = useState([{ title: "캔버스 1", id: 1}]);
     const [selectMenu, setSelectMenu] = useState({ title: "메시지", id: 0 });
     const [isLoading, setIsLoading] = useState(false);
-    const [workspaceId]= useRecoilValue(WorkspaceState)
+    const [workspaceId, setWorkSpaceId]= useRecoilState(WorkspaceState)
     const [conversationId, setConversationId]= useRecoilState(ConversationState)
     const [canvasId, setcanvasId] = useRecoilState(CanvasState);
 
