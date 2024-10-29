@@ -10,8 +10,11 @@ function ConversationList({ workspaceId }) {
     }, [workspaceId]);
 
     const fetchConversations = async () => {
+        console.log(workspaceId);
         try {
-            const response = await api.get(`/conversation/list?workspaceId=${workspaceId}`);
+            const userId = localStorage.getItem('userId');
+            const response = await api.get(`/conversation/list?workspaceId=${workspaceId}&userId=${userId}`);
+            console.log(response.data);
             setConversations(response.data);
         } catch (error) {
             alert("대화방 목록을 불러오는 데 실패했습니다.");
