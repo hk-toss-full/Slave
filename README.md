@@ -92,4 +92,23 @@ Slack 서비스를 클론 코딩 코딩
 ||POST|/conversations/new-workspace|대화방(채널/다이렉트 메세지) 생성|
 ||PUT|/conversations/{conversationId}|대화방(채널/다이렉트 메세지) 수정|
 ||DELETE|/conversations/{conversationId}|대화방(채널/다이렉트 메세지) 삭제|
+|Canvas|Post|/canvas|헤더에 워크스페이스 아이디 및 채널 아이디, 캔버스 번호를 발송 생성 및 업데이트 동일|
+||GET|/canvas/workspaceid/channelid/canvasid|전체 캔버스 조회|
+||GET|/canvas/workspaceid/channelid/canvasid|워크스페이스 까지만 입력시 워크 스페이스내 캔버스들 조회채널까지 입력시 채널 내 캔버스들 조회|
+||DELETE|/canvas?workspaceId={workspaceid}, channel={channelid}|캔버스를 삭제|
+|Canvas-Cursor|POST, PUT|/canvas/cursor|헤더에 워크스페이스 아이디 및 채널 아이디,유저 이름 ,캔버스 번호를 발송 현재 커서 위치를 저장 및 갱신|
+||GET|/canvas/cursor/{canvasid}/|현재 캔버스내 유저 정보|
+||DELETE||1분 갱신없으면 자동 삭제|
+|Chat|GET|/workspaces/{:workspaceid}/conversations/{:channelId}|워크스페이스의 채널 채팅 조회|
+||POST|/workspaces/{:workspaceid}/conversations/{:channelId}|워크스페이스의 채널 채팅 보내기|
+||PUT|/workspaces/{:workspaceid}/conversations/{:channelId}|워크스페이스의 채널 채팅 수정|
+||DELETE|/workspaces/{:workspaceid}/conversations/{:channelId}|워크스페이스의 채널 채팅 삭제|
+||GET|/workspaces/{:workspaceid}/conversations/{:directmessageid}|워크스페이스의 다이렉트 메시지 방 조회|
+||POST|/worlspaces{:workspaceid}//conversations/{:directmessageId}|워크스페이스의 다이렉트 메시지 방 채팅 보내기|
+||PUT|/worlspaces{:workspaceid}//conversations/{:directmessageId}|워크스페이스의 다이렉트 메시지 방 채팅 수정|
+||DELETE|/worlspaces{:workspaceid}//conversations/{:directmessageId}|워크스페이스의 다이렉트 메시지 방 채팅 삭제|
+|Bot|POST|/workspaces/{workspaceid}/conversations/{conversationsid}/bot|워크스페이스 id와 채널 id를 통해 Bot을 생성 body 보내는 데이터를 기준으로 구분|
+||GET|/workspaces/{workspaceid}/conversations/{conversationsid}/bot|존재하는 봇 조회|
+||PUT|/workspaces/{workspaceid}/conversations/{conversationsid}/bot|봇의 설정(1,2,3) 업데이트|
+||DELETE|/workspaces/{workspaceid}/conversations/{conversationsid}/bot|봇 삭제|
 
