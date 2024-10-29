@@ -19,3 +19,8 @@ export const CodeState = atom({
     key: 'CodeValue', // 고유한 key 값, 상태를 구분하는데 사용됨
     default: Array(6).fill(""),
 });
+
+export const EmailState = atom({
+    key: 'EmailValue', // 고유한 key 값, 상태를 구분하는데 사용됨
+    default: 'saftedf@naver.com',
+});

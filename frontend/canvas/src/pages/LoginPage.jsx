@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import {CodeState} from "../stores/Atom.jsx";
+import {CodeState, EmailState} from "../stores/Atom.jsx";
 import {CodeInput} from "./CodeInput.jsx";
 import {useRecoilState} from "recoil";
 
@@ -12,6 +12,7 @@ function LoginPage({ onLogin }) {
     const [isCodeSent, setIsCodeSent] = useState(true);
     const navigate = useNavigate();
     const [inputs, setInputs] = useRecoilState(CodeState);
+    const [recoilEmail, setrecoilEmail] = useRecoilState(EmailState);
 
     const handleSendCode = async () => {
         try {
@@ -26,6 +27,8 @@ function LoginPage({ onLogin }) {
 
     const handleLogin = async () => {
         try {
+            let code = inputs.join("")
+            console.log(code)
             const response = await api.post('/auth/login/verify-code', { email, code });
             localStorage.setItem('token', response.data);
             localStorage.setItem('userId', response.data.userId); // 사용자 ID 저장
@@ -58,7 +61,11 @@ function LoginPage({ onLogin }) {
                         type="email"
                         placeholder="name@work-email.com"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                            setrecoilEmail(e.target.value)
+                        }
+                    }
                     />
                     <div className={"w-full h-8"}></div>
                     <button onClick={handleSendCode}
