@@ -8,7 +8,7 @@ import api from '../api/axios';
 function WorkspaceListPage() {
     const navigate = useNavigate();
     const email = useRecoilValue(EmailState);
-    const [workspaces, SetWorkspaces] = useState([])
+    const [workspaces, setWorkspaces] = useState([])
 
 
     useEffect(() => {
@@ -43,14 +43,14 @@ function WorkspaceListPage() {
                         className={"w-full h-[82px] bg-[#ecdeec] rounded-t-[5px] flex justify-between items-center p-4 text-[18px]"}>{email}의
                         워크스페이스
                     </div>
-                    {workspaces.map(workspace => {
+                    {workspaces.map((workspace, index) => {
                         console.log(workspace)
                         console.log(workspaces)
                         // eslint-disable-next-line react/jsx-key
                         return <div
                             className={`w-full h-[107px] bg-white ${index === workspaces.length - 1 && `rounded-b-[5px]`} flex items-center justify-between p-4`}>
                             <span>{workspace.workspaceName}</span>
-                            <button onClick={() => navigate('/workspace/create')}
+                            <button onClick={() => navigate('/app')}
                                     className={"w-[158px] h-[52px] bg-[#4A154B] rounded-[4px] text-white text-[14px]"}>
                                 워크스페이스 입장
                             </button>
