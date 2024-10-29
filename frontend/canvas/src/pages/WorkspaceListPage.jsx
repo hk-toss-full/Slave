@@ -1,14 +1,29 @@
 // src/pages/WorkspaceListPage.jsx
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useRecoilState, useRecoilValue} from "recoil";
 import {EmailState} from "../stores/Atom.jsx";
+import api from '../api/axios';
 
-function WorkspaceListPage({ onSelectWorkspace }) {
+function WorkspaceListPage() {
+    const [workspaces, setWorkspaces] = useState([]);
     const navigate = useNavigate();
     const email = useRecoilValue(EmailState);
     const [workspaces, SetWorkspaces] = useState([1,1,1])
 
+
+    useEffect(() => {
+        const fetchWorkspaces = async () => {
+            const userId = localStorage.getItem('userId');
+            const response = await api.get(`/workspace/list?userId=${userId}`);
+            setWorkspaces(response.data);
+        };
+        fetchWorkspaces();
+    }, []);
+
+    const goToCreateWorkspace = () => {
+        navigate('/workspace/create');
+    };
 
     return (
         <div className={"w-full min-h-full bg-[#4a154b]"}>

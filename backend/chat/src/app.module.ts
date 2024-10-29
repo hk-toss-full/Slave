@@ -4,6 +4,8 @@ import { MessageModule } from './message/message.module';
 import { Message } from './message/entities/message.entity';
 import { MessageGateway } from './message/message.gateway';
 import { MessageService } from './message/message.service';
+import { DmModule } from './dm/dm.module';
+import {Dm} from "./dm/entities/dm.entity";
 
 @Module({
   imports: [
@@ -14,11 +16,12 @@ import { MessageService } from './message/message.service';
       username: 'root',
       password: '131072',
       database: 'test',
-      entities: [Message],
+      entities: [Message, Dm],
       synchronize: true, // 개발 환경에서만 사용
     }),
-    TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([Message,Dm]),
     MessageModule,
+    DmModule,
   ],
   providers: [],
 })

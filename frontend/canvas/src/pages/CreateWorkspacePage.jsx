@@ -1,25 +1,24 @@
+// src/pages/CreateWorkspacePage.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
-const CreateWorkspacePage = ({ userId }) => {
+const CreateWorkspacePage = () => {
     const [workspaceName, setWorkspaceName] = useState('');
     const navigate = useNavigate();
 
     const handleCreateWorkspace = async () => {
         try {
+            const userId = localStorage.getItem('userId');
             const data = {
                 name: workspaceName,
                 userId: userId,
             };
 
-            const response = await axios.post('http://localhost:8080/workspace/create', data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            await api.post('/workspace/create', data, {
+                headers: { 'Content-Type': 'application/json' },
             });
 
-            console.log('Workspace created:', response.data);
             navigate('/workspaces'); // 워크스페이스 목록 페이지로 이동
         } catch (error) {
             console.error('워크스페이스 생성 오류:', error);
@@ -27,7 +26,7 @@ const CreateWorkspacePage = ({ userId }) => {
     };
 
     const handleCancel = () => {
-        navigate(-1); // 이전 페이지로 이동
+        navigate('/workspaces'); // 취소 시 워크스페이스 목록으로 이동
     };
 
     return (

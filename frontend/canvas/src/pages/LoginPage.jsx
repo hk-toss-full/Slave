@@ -9,7 +9,7 @@ import {useRecoilState} from "recoil";
 function LoginPage({ onLogin }) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
-    const [isCodeSent, setIsCodeSent] = useState(true);
+    const [isCodeSent, setIsCodeSent] = useState(false);
     const navigate = useNavigate();
     const [inputs, setInputs] = useRecoilState(CodeState);
     const [recoilEmail, setrecoilEmail] = useRecoilState(EmailState);
