@@ -10,7 +10,7 @@ function SignUpPage() {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [nickname, setNickname] = useState('');
-    const [isCodeSent, setIsCodeSent] = useState(false);
+    const [isCodeSent, setIsCodeSent] = useState(true);
     const [isCodeVerified, setIsCodeVerified] = useState(false); // 인증 코드 검증 상태
     const navigate = useNavigate();
     const [inputs, setInputs] = useRecoilState(CodeState);
