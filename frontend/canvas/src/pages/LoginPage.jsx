@@ -9,7 +9,7 @@ import {useRecoilState} from "recoil";
 function LoginPage({ onLogin }) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
-    const [isCodeSent, setIsCodeSent] = useState(true);
+    const [isCodeSent, setIsCodeSent] = useState(false);
     const navigate = useNavigate();
     const [inputs, setInputs] = useRecoilState(CodeState);
 
@@ -26,6 +26,8 @@ function LoginPage({ onLogin }) {
 
     const handleLogin = async () => {
         try {
+            let code = inputs.join("")
+            console.log(code)
             const response = await api.post('/auth/login/verify-code', { email, code });
             localStorage.setItem('token', response.data);
             localStorage.setItem('userId', response.data.userId); // 사용자 ID 저장
