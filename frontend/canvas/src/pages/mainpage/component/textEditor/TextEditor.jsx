@@ -11,6 +11,8 @@ import { Awareness } from 'y-protocols/awareness';
 import { postCursor, sseCursor } from './utils/Cursor.js';
 import { CustomStyle, Separator } from './utils/CustomStyle.js';
 import { EventKey } from './utils/EventKey.js';
+import {useRecoilValue} from "recoil";
+import {ConversationState, WorkspaceState} from "../../../../stores/Atom.jsx";
 
 const ip = `localhost`;
 const url = `http://${ip}:8080/api/v1`;
@@ -18,13 +20,13 @@ const url = `http://${ip}:8080/api/v1`;
 Quill.register('modules/cursors', QuillCursors);
 Quill.register(CustomStyle, true);
 Quill.register(Separator);
-const workspace_id = 1;
-const conversation_id = 1;
 
 const TextEditor = ({canvas_id}) => {
     const quillRef = useRef(null);
     const [doc] = useState(new Y.Doc());
     const [awareness] = useState(new Awareness(doc));
+    const [workspace_id] = useRecoilValue(WorkspaceState)
+    const [conversation_id] = useRecoilValue(ConversationState)
 
     useEffect(() => {
         const quill = quillRef.current.getEditor();

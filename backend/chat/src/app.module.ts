@@ -12,7 +12,7 @@ import { MessageService } from './message/message.service';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'password',
+      password: '131072',
       database: 'test',
       entities: [Message],
       synchronize: true, // 개발 환경에서만 사용

@@ -1,12 +1,10 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import SignUpPage from './pages/SignUpPage.jsx';
 import WorkspaceListPage from './pages/WorkspaceListPage.jsx';
 import CreateWorkspacePage from './pages/CreateWorkspacePage.jsx';
-import ConversationList from './components/ConversationList.jsx';
-import TextEditor from './quill/TextEditor';
 import {Mainpage} from "./pages/mainpage/Mainpage.jsx";
 
 const App = () => {

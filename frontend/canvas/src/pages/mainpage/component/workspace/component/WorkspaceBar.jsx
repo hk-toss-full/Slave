@@ -3,7 +3,7 @@ import HomeIcon from "../img/homeicon.jsx";
 export const WorkspaceBar = () => {
     return (
         <div className={"flex flex-col items-center justify-center"}>
-            <div className="w-9 h-9 bg-[#DDDDDD] rounded-[8px] mb-2"></div>
+            <div className="w-9 h-9 bg-[#DDDDDD] rounded-[8px] mb-2 flex justify-center items-center text-[24px] font-black">T</div>
             <div className="w-full h-0 mb-2"></div>
             <div
                 className="w-[52px] h-[68px] pt-2 pb-2 rounded-[6px] flex-wrap flex items-center justify-center">

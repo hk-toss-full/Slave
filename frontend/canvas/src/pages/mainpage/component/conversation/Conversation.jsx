@@ -8,7 +8,7 @@ export const Conversation = () => {
             <ConversationBar/>
             <div className={"w-full h-full max-h-full"}
                  style={{maxWidth: `calc(100% - 260px)`}}>
-                <ConversationTitleBar/>
+                <ConversationTitleBar title={"공지사항"}/>
                 <ConversationMenubar/>
             </div>
         </>

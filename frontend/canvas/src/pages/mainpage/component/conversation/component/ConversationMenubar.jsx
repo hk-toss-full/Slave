@@ -1,8 +1,9 @@
 import TextEditorMark3 from "../../textEditor/TextEditor.jsx";
 import { Plus } from "./img/plus.jsx";
 import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 import Chat from "../../../../../chat/Chat.jsx";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {CanvasState, ConversationState, WorkspaceState} from "../../../../../stores/Atom.jsx";
 
 export const ConversationMenubar = () => {
     const [isRotated, setIsRotated] = useState(false);
@@ -10,6 +11,9 @@ export const ConversationMenubar = () => {
     const [Menu, setMenu] = useState([{ title: "캔버스 1", id: 1}]);
     const [selectMenu, setSelectMenu] = useState({ title: "메시지", id: 0 });
     const [isLoading, setIsLoading] = useState(false);
+    const [workspaceId]= useRecoilValue(WorkspaceState)
+    const [conversationId]= useRecoilValue(ConversationState)
+    const [canvasId, setcanvasId] = useRecoilState(CanvasState);
 
     const handleClick = () => {
         setIsRotated((prev) => !prev);
@@ -19,11 +23,13 @@ export const ConversationMenubar = () => {
     const addCanvas = () => {
         const newCanvas = { title: `캔버스 ${Menu.length + 1}`, id: Menu.length + 1 };
         setMenu((prevMenu) => [...prevMenu, newCanvas]);
-        setSelectMenu(newCanvas);
         setShowPopup(false);
     };
 
     const handleMenu = (menu) => {
+        if(menu.title !== '메세지'){
+            setcanvasId(menu.id)
+        }
         if (menu.id !== selectMenu.id) {
             setIsLoading(true);
             setTimeout(() => {
@@ -99,9 +105,9 @@ export const ConversationMenubar = () => {
                             <p>로딩 중...</p>
                         </div>
                     ) : selectMenu.id === 0 ? (
-                        <Chat workspaceId={1} channelId={1} />
+                        <Chat workspaceId={workspaceId} channelId={conversationId} />
                     ) : (
-                        <TextEditorMark3 canvas_id={selectMenu.id} key={uuidv4()}/>
+                        <TextEditorMark3 canvas_id={selectMenu.id}/>
                     )}
                 </div>
             </div>
