@@ -89,7 +89,9 @@ Slack 서비스를 클론 코딩 코딩
     - 리팩터링 및 컴포넌트화를 통한 가독성 향상
    
 ### 최승혁
-
+ -
+ -
+ -
 
 <img src="https://github.com/user-attachments/assets/a410ab0c-aa63-4a60-860b-953c939b00aa">
 
