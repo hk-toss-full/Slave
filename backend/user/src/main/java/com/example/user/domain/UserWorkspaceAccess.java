@@ -11,4 +11,7 @@ public class UserWorkspaceAccess {
 
     @Column(nullable = false)
     private boolean isAdmin;
+
+    @ManyToOne
+    private Workspace workspace;  // JoinColumn 생략
 }
