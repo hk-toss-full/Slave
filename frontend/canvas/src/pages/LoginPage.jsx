@@ -2,12 +2,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import {CodeState} from "../stores/Atom.jsx";
+import {CodeInput} from "./CodeInput.jsx";
+import {useRecoilState} from "recoil";
 
 function LoginPage({ onLogin }) {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
-    const [isCodeSent, setIsCodeSent] = useState(false);
+    const [isCodeSent, setIsCodeSent] = useState(true);
     const navigate = useNavigate();
+    const [inputs, setInputs] = useRecoilState(CodeState);
 
     const handleSendCode = async () => {
         try {
@@ -43,43 +47,56 @@ function LoginPage({ onLogin }) {
             <div className={"w-full h-12"}></div>
             <h1 className={"text-[26px]"}>Slave</h1>
             <div className={"w-full h-10"}></div>
-            <div className={"text-[48px] font-bold"}>이메일로 로그인해 보세요</div>
+            <div className={"text-[48px] font-bold"}>{isCodeSent ? '코드는 이메일에서 확인하세요' : `이메일로 로그인해 보세요`}</div>
             <div className={"w-full"}></div>
-            <div className={"text-[18px]"}><strong>직장에서 사용하는 이메일 주소</strong>로 로그인하는 걸 추천드려요.</div>
+            <div className={"text-[18px]"}>{isCodeSent ? '이메일에 6자리 코드를 전송했습니다. 코드는 잠시 후에 만료되니 서둘러 입력하세요.' : <><strong>직장에서 사용하는 이메일 주소</strong>로 로그인하는 걸 추천드려요.</>}</div>
             <div className={"w-full h-8"}></div>
-            <input
-                className={"border border-solid border-gray-600 rounded-xl w-[376px] h-11 pl-4 flex items-center text-[20px] font-medium"}
-                type="email"
-                placeholder="name@work-email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <div className={"w-full h-8"}></div>
-            <button onClick={handleSendCode}
-                    className={"border border-solid bg-[#4A154B] rounded-xl w-[376px] h-11 text-center text-white font-bold"}>이메일로
-                로그인
-            </button>
-            <div className={"w-full h-8"}></div>
+            {!isCodeSent && (
+                <>
+                    <input
+                        className={"border border-solid border-gray-600 rounded-xl w-[376px] h-11 pl-4 flex items-center text-[20px] font-medium"}
+                        type="email"
+                        placeholder="name@work-email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <div className={"w-full h-8"}></div>
+                    <button onClick={handleSendCode}
+                            className={"border border-solid bg-[#4A154B] rounded-xl w-[376px] h-11 text-center text-white font-bold"}>이메일로
+                        로그인
+                    </button>
+                </>
+            )
+            }
+
 
             {isCodeSent && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="인증 코드 입력"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                    />
-                    <button onClick={handleLogin}>로그인</button>
+                <div className={"flex justify-center flex-wrap w-full"}>
+                    <div className={"w-[500px] h-[101.6px] pb-2"}>
+                        <CodeInput/>
+                        {/*<input*/}
+                        {/*    type="text"*/}
+                        {/*    placeholder="인증 코드 입력"*/}
+                        {/*    value={code}*/}
+                        {/*    onChange={(e) => setCode(e.target.value)}*/}
+                        {/*/>*/}
+                    </div>
+                        <div className={"w-full h-4"}></div>
+                        <button onClick={handleLogin}
+                                className={"border border-solid bg-[#4A154B] rounded-xl w-[376px] h-11 text-center text-white font-bold"}>로그인
+                        </button>
+                    </div>
+                    )}
+                    <div className={"w-full h-8"}></div>
+                    {/* 회원가입 페이지로 이동하는 버튼 */}
+                    <div style={{marginTop: '20px'}} className={"text-center"}>
+                        <p>계정이 없으신가요?</p>
+                        <div className={"w-full h-4"}></div>
+                        <button onClick={goToSignUp}><span className={"underline text-blue-600"}>회원가입</span> 페이지로 이동
+                        </button>
+                    </div>
                 </div>
-            )}
+            );
+            }
 
-            {/* 회원가입 페이지로 이동하는 버튼 */}
-            <div style={{marginTop: '20px'}} className={"text-center"}>
-                <p>계정이 없으신가요?</p>
-                <div className={"w-full h-4"}></div>
-                <button onClick={goToSignUp}><span className={"underline text-blue-600"}>회원가입</span> 페이지로 이동</button>
-            </div>
-        </div>
-    );
-}
-export default LoginPage;
+            export default LoginPage;
