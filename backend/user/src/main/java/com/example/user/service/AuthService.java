@@ -76,9 +76,10 @@ public class AuthService {
 
     // 인증 코드 검증 및 회원가입
     @Transactional
-    public void verifyCodeAndRegister(String email, String code) {
+    public Long verifyCodeAndRegister(String email, String code) {
         logger.info("인증 코드 검증 시작 - 이메일: {}, 코드: {}", email, code);
 
+        // 인증 코드 확인
         String storedCode = verificationCodes.get(email);
         if (storedCode == null) {
             logger.error("이메일 {}에 대한 인증 코드가 저장되지 않았습니다.", email);
@@ -90,20 +91,27 @@ public class AuthService {
             throw new IllegalArgumentException("유효하지 않은 인증 코드입니다!");
         }
 
+        // 이메일 중복 확인
         if (userRepository.findByUserEmail(email).isPresent()) {
             logger.error("이미 존재하는 계정입니다: {}", email);
             throw new IllegalArgumentException("이미 존재하는 계정입니다!");
         }
 
-        // 기본 사용자 이름과 프로필 이미지 설정
+        // 기본 사용자 이름 설정
         String defaultUserName = email.split("@")[0];
 
         // User 객체 생성 및 저장
         User user = new User(email, defaultUserName);
         userRepository.save(user);  // 사용자 정보 저장
-        verificationCodes.remove(email); // 사용한 인증 코드 제거
+
+        // 사용된 인증 코드 제거
+        verificationCodes.remove(email);
+
+        // 회원가입 완료 로그 및 userId 반환
         logger.info("회원가입 성공 - 이메일: {}", email);
+        return Long.valueOf(user.getUserId()); // userId 반환
     }
+
 
     // 로그인 인증 메서드 (이메일과 인증 코드 사용)
     public boolean authenticate(String email, String code) {

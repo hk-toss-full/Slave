@@ -8,13 +8,14 @@ import api from '../api/axios';
 function WorkspaceListPage() {
     const navigate = useNavigate();
     const email = useRecoilValue(EmailState);
-    const [workspaces, SetWorkspaces] = useState([1,1,1])
+    const [workspaces, SetWorkspaces] = useState([])
 
 
     useEffect(() => {
         const fetchWorkspaces = async () => {
             const userId = localStorage.getItem('userId');
             const response = await api.get(`/workspace/list?userId=${userId}`);
+            console.log(response.data);
             setWorkspaces(response.data);
         };
         fetchWorkspaces();
@@ -42,11 +43,13 @@ function WorkspaceListPage() {
                         className={"w-full h-[82px] bg-[#ecdeec] rounded-t-[5px] flex justify-between items-center p-4 text-[18px]"}>{email}의
                         워크스페이스
                     </div>
-                    {workspaces.map((workspace, index) => {
+                    {workspaces.map(workspace => {
+                        console.log(workspace)
+                        console.log(workspaces)
                         // eslint-disable-next-line react/jsx-key
                         return <div
                             className={`w-full h-[107px] bg-white ${index === workspaces.length - 1 && `rounded-b-[5px]`} flex items-center justify-between p-4`}>
-                            <span>{workspace}</span>
+                            <span>{workspace.workspaceName}</span>
                             <button onClick={() => navigate('/workspace/create')}
                                     className={"w-[158px] h-[52px] bg-[#4A154B] rounded-[4px] text-white text-[14px]"}>
                                 워크스페이스 입장
