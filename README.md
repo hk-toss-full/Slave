@@ -70,10 +70,26 @@ Slack 서비스를 클론 코딩 코딩
 - 유저별 워크스페이스 리스트 조회가 안되는 부분 -> @Query 관련해서, 조인 문법을 틀려서(ON을 안써준것이 원인) 데이터베이스에서 워크스페이스 리스트가 불러와지지 않았던 것. 쿼리문을 수정하여 해결함
    
 ### 최승혁
- -
- -
- -
 
 <img src="https://github.com/user-attachments/assets/a410ab0c-aa63-4a60-860b-953c939b00aa">
 
 <img src="https://github.com/user-attachments/assets/11f695eb-dc66-465a-a56e-54f23afb07c9">
+
+
+
+
+# 기능 명세서
+|API 종류|Method|Endpoint(요청 URL)|Description|
+|------|------|------|------|
+|Users|POST|/users/sending-code|유저 이메일로 코드 전송|
+||POST|/users/verification|유저 이메일 로그인|
+||PUT|/users/logout|유저 로그아웃 기능|
+|Workspaces|GET|/workspaces/{userId}|소속 워크스페이스 조회|
+||POST|/workspaces/create|워크스페이스 생성|
+||PUT|/workspaces/{workspaceId}|워크스페이스 수정|
+||DELETE|/workspaces/{workspaceId}|워크스페이스 삭제|
+|Conversations|GET|/conversations/{workspaceId}|워크스페이스 내 대화방 조회|
+||POST|/conversations/new-workspace|대화방(채널/다이렉트 메세지) 생성|
+||PUT|/conversations/{conversationId}|대화방(채널/다이렉트 메세지) 수정|
+||DELETE|/conversations/{conversationId}|대화방(채널/다이렉트 메세지) 삭제|
+
