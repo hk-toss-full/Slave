@@ -1,25 +1,28 @@
 import {useState} from "react";
 import {ConversationTop} from "./ConversationTop.jsx";
 import {ShopIcon} from "./img/ShopIcon.jsx";
-import {HiddenIcon} from "./img/HiddenIcon.jsx";
 import ConversationList from "../../../../../components/ConversationList.jsx";
+import {useRecoilState} from "recoil";
+import {ConversationNameState, ConversationState} from "../../../../../stores/Atom.jsx";
 
 export const ConversationBar = () => {
     const [isChannelDropdownOpen, setIsChannelDropdownOpen] = useState(false);
     const [showChannelPopup, setShowChannelPopup] = useState(false);
-    const [ChannelDropdownData, setChannelDropdownData] = useState([
-        {title: '공지사항', status: true},
-        {title: '일반', status: false},
-        {title: '한경프론트엔드', status: true},
-        {title: '공지사항', status: true},
-        {title: '공지사항', status: true},
-        {title: '공지사항', status: true},
-        {title: '공지사항', status: true}
-    ]); // 드롭다운 데이터를 위한 상태
+    const [conversationDropdownData, setconversationDropdownData] = useState([
+        {conversationId: 1, conversationName: '공지사항', conversationType: 1},
+        {conversationId: 2, conversationName: '조경준', conversationType: 2},
+        {conversationId: 3, conversationName: '한경프론트엔드', conversationType: 1},
+        {conversationId: 4, conversationName: '한경풀스택', conversationType: 1},
+        {conversationId: 5, conversationName: '조예은', conversationType: 2},
+        {conversationId: 6, conversationName: '이승진', conversationType: 2},
+        {conversationId: 7, conversationName: '한경백엔드', conversationType: 1}
+    ]);
+    const [conversationName, setConversationName] = useRecoilState(ConversationNameState)
+
+    const [conversationId, setConversationId] = useRecoilState(ConversationState)
 
     const [isDMDropdownOpen, setIsDMDropdownOpen] = useState(false);
     const [showDMPopup, setShowDMPopup] = useState(false);
-    const [DMDropdownData, setDMDropdownData] = useState(['조경준', '김예은', '최승혁', '이승진']);
 
     const toggleChannelDropdown = () => {
         setIsChannelDropdownOpen(!isChannelDropdownOpen);
@@ -35,6 +38,15 @@ export const ConversationBar = () => {
 
     const handleDMClick = () => {
         setShowDMPopup(!showDMPopup);
+    };
+
+    const handleConversation = (conversationId) => {
+        console.log(conversationId);
+        setConversationId(conversationId);
+    };
+
+    const handleConversationName = (conversationName) => {
+        setConversationName(conversationName);
     };
 
     return (
@@ -68,15 +80,23 @@ export const ConversationBar = () => {
                         {/* 드롭다운 메뉴 */}
                         {isChannelDropdownOpen && (
                             <div className={"mt-1 rounded-lg text-white"}>
-                                {ChannelDropdownData.map(item => {
+                                {conversationDropdownData.map(item => {
+                                    if(item.conversationType === 1){
                                         return (
                                             // eslint-disable-next-line react/jsx-key
                                             <div
-                                                className="px-4 py-2 hover:bg-conversation-rgba rounded-lg cursor-pointer flex items-center">
-                                                <div className={"w-4 h-4"}>{item.status ? <ShopIcon/> : <HiddenIcon/>}</div>
-                                                <p className={"ml-2"}>{item.title}</p>
+                                                className="px-4 py-2 hover:bg-conversation-rgba rounded-lg cursor-pointer flex items-center"
+                                                onClick={() => {
+                                                    handleConversation(item.conversationId)
+                                                    handleConversationName(item.conversationName)
+                                                }
+                                            }
+                                            >
+                                                <div className={"w-4 h-4"}>{<ShopIcon/>}</div>
+                                                <p className={"ml-2"}>{item.conversationName}</p>
                                             </div>
                                         )
+                                    }
                                     }
                                 )}
                             </div>
@@ -103,16 +123,23 @@ export const ConversationBar = () => {
                         </div>
                         {isDMDropdownOpen && (
                             <div className={"mt-1 rounded-lg text-white"}>
-                                {DMDropdownData.map(item => {
+                                {conversationDropdownData.map(item => {
+                                    if(item.conversationType === 2){
                                         return (
                                             // eslint-disable-next-line react/jsx-key
                                             <div
-                                                className="px-4 py-2 hover:bg-conversation-rgba rounded-lg cursor-pointer flex items-center">
+                                                className="px-4 py-2 hover:bg-conversation-rgba rounded-lg cursor-pointer flex items-center"
+                                                onClick={() => {
+                                                    handleConversation(item.conversationId)
+                                                    handleConversationName(item.conversationName)
+                                                }
+                                                }
+                                            >
                                                 <div className={"w-4 h-4"}></div>
-                                                <p className={"ml-2"}>{item}</p>
+                                                <p className={"ml-2"}>{item.conversationName}</p>
                                             </div>
                                         )
-                                    }
+                                    }}
                                 )}
                             </div>
                         )}

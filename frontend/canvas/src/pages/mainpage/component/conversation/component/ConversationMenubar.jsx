@@ -2,7 +2,7 @@ import TextEditorMark3 from "../../textEditor/TextEditor.jsx";
 import { Plus } from "./img/plus.jsx";
 import { useState, useEffect } from "react";
 import Chat from "../../../../../chat/Chat.jsx";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {CanvasState, ConversationState, WorkspaceState} from "../../../../../stores/Atom.jsx";
 
 export const ConversationMenubar = () => {
@@ -12,7 +12,7 @@ export const ConversationMenubar = () => {
     const [selectMenu, setSelectMenu] = useState({ title: "메시지", id: 0 });
     const [isLoading, setIsLoading] = useState(false);
     const [workspaceId]= useRecoilValue(WorkspaceState)
-    const [conversationId]= useRecoilValue(ConversationState)
+    const [conversationId, setConversationId]= useRecoilState(ConversationState)
     const [canvasId, setcanvasId] = useRecoilState(CanvasState);
 
     const handleClick = () => {

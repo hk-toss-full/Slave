@@ -11,7 +11,7 @@ import { Awareness } from 'y-protocols/awareness';
 import { postCursor, sseCursor } from './utils/Cursor.js';
 import { CustomStyle, Separator } from './utils/CustomStyle.js';
 import { EventKey } from './utils/EventKey.js';
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {ConversationState, WorkspaceState} from "../../../../stores/Atom.jsx";
 
 const ip = `localhost`;
@@ -26,7 +26,7 @@ const TextEditor = ({canvas_id}) => {
     const [doc] = useState(new Y.Doc());
     const [awareness] = useState(new Awareness(doc));
     const [workspace_id] = useRecoilValue(WorkspaceState)
-    const [conversation_id] = useRecoilValue(ConversationState)
+    const [conversation_id,setConversation_id] = useRecoilState(ConversationState)
 
     useEffect(() => {
         const quill = quillRef.current.getEditor();

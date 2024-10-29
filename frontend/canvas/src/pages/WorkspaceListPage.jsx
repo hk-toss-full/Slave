@@ -6,7 +6,6 @@ import {EmailState} from "../stores/Atom.jsx";
 import api from '../api/axios';
 
 function WorkspaceListPage() {
-    const [workspaces, setWorkspaces] = useState([]);
     const navigate = useNavigate();
     const email = useRecoilValue(EmailState);
     const [workspaces, SetWorkspaces] = useState([1,1,1])
