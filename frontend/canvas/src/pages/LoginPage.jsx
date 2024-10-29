@@ -39,15 +39,27 @@ function LoginPage({ onLogin }) {
     };
 
     return (
-        <div>
-            <h1>로그인</h1>
+        <div className={"flex justify-center flex-wrap w-full"}>
+            <div className={"w-full h-12"}></div>
+            <h1 className={"text-[26px]"}>Slave</h1>
+            <div className={"w-full h-10"}></div>
+            <div className={"text-[48px] font-bold"}>이메일로 로그인해 보세요</div>
+            <div className={"w-full"}></div>
+            <div className={"text-[18px]"}><strong>직장에서 사용하는 이메일 주소</strong>로 로그인하는 걸 추천드려요.</div>
+            <div className={"w-full h-8"}></div>
             <input
+                className={"border border-solid border-gray-600 rounded-xl w-[376px] h-11 pl-4 flex items-center text-[20px] font-medium"}
                 type="email"
-                placeholder="이메일 입력"
+                placeholder="name@work-email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
-            <button onClick={handleSendCode}>코드 전송</button>
+            <div className={"w-full h-8"}></div>
+            <button onClick={handleSendCode}
+                    className={"border border-solid bg-[#4A154B] rounded-xl w-[376px] h-11 text-center text-white font-bold"}>이메일로
+                로그인
+            </button>
+            <div className={"w-full h-8"}></div>
 
             {isCodeSent && (
                 <div>
@@ -62,12 +74,12 @@ function LoginPage({ onLogin }) {
             )}
 
             {/* 회원가입 페이지로 이동하는 버튼 */}
-            <div style={{ marginTop: '20px' }}>
+            <div style={{marginTop: '20px'}} className={"text-center"}>
                 <p>계정이 없으신가요?</p>
-                <button onClick={goToSignUp}>회원가입 페이지로 이동</button>
+                <div className={"w-full h-4"}></div>
+                <button onClick={goToSignUp}><span className={"underline text-blue-600"}>회원가입</span> 페이지로 이동</button>
             </div>
         </div>
     );
 }
-
 export default LoginPage;
