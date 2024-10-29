@@ -9,5 +9,6 @@ public class UserWorkspaceAccess {
     @EmbeddedId
     private UserWorkspaceAccessId id;
 
+    @Column(nullable = false)
     private boolean isAdmin;
 }
