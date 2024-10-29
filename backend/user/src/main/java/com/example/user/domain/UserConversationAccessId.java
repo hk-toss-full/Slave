@@ -1,5 +1,6 @@
 package com.example.user.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserConversationAccessId implements Serializable {
+    @Column(nullable = false)
     private Long userId;
+    @Column(nullable = false)
     private Long conversationId;
 }

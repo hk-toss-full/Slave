@@ -32,7 +32,7 @@ public class ConversationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid workspace ID"));
 
         Conversation conversation = new Conversation();
-        conversation.setName(name);
+        conversation.setConversationName(name);
         conversation.setConversationType(type);
         conversation.setPrivate(isPrivate);
         conversation.setWorkspace(workspace);
@@ -62,7 +62,7 @@ public class ConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException("Conversation not found"));
 
-        conversation.setName(name);
+        conversation.setConversationName(name);
         conversation.setPrivate(isPrivate);
         return conversationRepository.save(conversation);
     }

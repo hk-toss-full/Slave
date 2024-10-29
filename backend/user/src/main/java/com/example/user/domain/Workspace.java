@@ -10,5 +10,6 @@ public class Workspace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workspaceId;
 
+    @Column(nullable = false, length = 20)
     private String workspaceName;
 }

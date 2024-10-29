@@ -10,14 +10,17 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationId;
 
-    private String name;
+    @Column(nullable = false)
+    private String conversationName;
 
     @ManyToOne
-    @JoinColumn(name = "workspace_id")
+    @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
 
+    @Column(nullable = false)
     private int conversationType; // 1: 채널, 2: 다이렉트 메세지
 
+    @Column(nullable = false)
     private boolean isPrivate;
 
 }
