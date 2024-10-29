@@ -13,18 +13,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-server:
-  port: 8761  # Eureka 서버 기본 포트
-
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-  instance:
-    hostname: localhost  # 다른 PC들이 이 주소로 Eureka에 접근할 수 있게 설정
-  server:
-    enable-self-preservation: false  # 클라이언트 접속 테스트 시 설정
-
 jwt:
   secret: ogerpon
 

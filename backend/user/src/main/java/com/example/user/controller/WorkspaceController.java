@@ -17,8 +17,8 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
     @GetMapping("/list")
-    public List<Workspace> getUserWorkspaces(@RequestParam Long userId) {
-        return workspaceService.getUserWorkspaces(userId);
+    public List<Workspace> getUserWorkspaces(@RequestParam String email) {
+        return workspaceService.getUserWorkspacesByEmail(email);
     }
 
     @PostMapping("/create")
